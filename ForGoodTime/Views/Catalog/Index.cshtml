@@ -147,9 +147,13 @@
                                 <a asp-controller="Catalog" asp-action="Details" asp-route-Id="@item.Id">@item.Name</a>
                                 <div class="single_product_text">
                                     <h3>@item.Price $</h3>
+
                                     <a asp-action="AddToShoppingCartGet" asp-controller="ShoppingCart" asp-route-Id="@item.Id" class="add_cart">+ to cart</a>
-                                    <a asp-action="AddToWhishList" asp-controller="WishList" asp-route-Id="@item.Id">+ to WishList</a>
-                                </div>
+                                    @if (User.Identity.IsAuthenticated)
+                                     {
+                                        <a asp-action="AddToWhishList" asp-controller="WishList" asp-route-Id="@item.Id">+ to WishList</a>
+                                     }
+                                    </div>
                             </div>
                         </div>
                     }

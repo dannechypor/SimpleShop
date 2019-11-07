@@ -18,7 +18,7 @@ namespace Shop.DAL.DbInitialze
 
             var adminUser = new ApplicationUser
             {
-                Email = "admin@gmail.com",
+                Email = "admin@admin.com",
                 UserName = "admin@admin.com",
                 FirstName = "Dan",
                 LastName = "Nechypor",
@@ -31,7 +31,7 @@ namespace Shop.DAL.DbInitialze
             var user = new ApplicationUser
             {
                 Email = "user@user.com",
-                UserName = "nazar.doc@gmail.com",
+                UserName = "user@user.com",
                 FirstName = "Dochylo",
                 LastName = "Nazar",
                 Address = "Chernivchy , 19",
