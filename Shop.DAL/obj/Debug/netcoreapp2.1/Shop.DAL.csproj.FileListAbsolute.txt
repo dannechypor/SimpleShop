@@ -26,3 +26,17 @@ C:\Users\Lenovo\Source\Repos\NewProject\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DA
 C:\Users\Lenovo\Source\Repos\NewProject\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.csproj.CopyComplete
 C:\Users\Lenovo\Source\Repos\NewProject\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.dll
 C:\Users\Lenovo\Source\Repos\NewProject\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.pdb
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Shop.DAL.deps.json
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Shop.DAL.runtimeconfig.json
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Shop.DAL.runtimeconfig.dev.json
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Shop.DAL.dll
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Shop.DAL.pdb
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Model.dll
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\bin\Debug\netcoreapp2.1\Model.pdb
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.csprojAssemblyReference.cache
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.csproj.CoreCompileInputs.cache
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.AssemblyInfoInputs.cache
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.AssemblyInfo.cs
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.csproj.CopyComplete
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.dll
+C:\Users\nechy\OneDrive\Рабочий стол\ForGoodTime\ForGoodTime\Shop.DAL\obj\Debug\netcoreapp2.1\Shop.DAL.pdb

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj": {}
+    "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj": {
+    "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj",
+        "projectUniqueName": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj",
         "projectName": "ForGoodTime",
-        "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj",
+        "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\ForGoodTime\\ForGoodTime.csproj",
         "packagesPath": "C:\\Users\\nechy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\ForGoodTime\\obj\\",
+        "outputPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\ForGoodTime\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -30,11 +30,11 @@
         "frameworks": {
           "netcoreapp2.1": {
             "projectReferences": {
-              "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj": {
-                "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj"
+              "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj": {
+                "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj"
               },
-              "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
-                "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj"
+              "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
+                "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj"
               }
             }
           }
@@ -111,14 +111,14 @@
         }
       }
     },
-    "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj": {
+    "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj",
+        "projectUniqueName": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj",
         "projectName": "Model",
-        "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj",
+        "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj",
         "packagesPath": "C:\\Users\\nechy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\obj\\",
+        "outputPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -205,14 +205,14 @@
         }
       }
     },
-    "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj": {
+    "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj",
+        "projectUniqueName": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj",
         "projectName": "Shop.BLL",
-        "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj",
+        "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\Shop.BLL.csproj",
         "packagesPath": "C:\\Users\\nechy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.BLL\\obj\\",
+        "outputPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.BLL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -231,11 +231,11 @@
         "frameworks": {
           "netcoreapp2.1": {
             "projectReferences": {
-              "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj": {
-                "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj"
+              "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj": {
+                "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj"
               },
-              "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
-                "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj"
+              "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
+                "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj"
               }
             }
           }
@@ -306,14 +306,14 @@
         }
       }
     },
-    "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
+    "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj",
+        "projectUniqueName": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj",
         "projectName": "Shop.DAL",
-        "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj",
+        "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\Shop.DAL.csproj",
         "packagesPath": "C:\\Users\\nechy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Shop.DAL\\obj\\",
+        "outputPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Shop.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -332,8 +332,8 @@
         "frameworks": {
           "netcoreapp2.1": {
             "projectReferences": {
-              "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj": {
-                "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj"
+              "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj": {
+                "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj"
               }
             }
           }

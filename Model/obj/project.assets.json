@@ -12603,11 +12603,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj",
+      "projectUniqueName": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj",
       "projectName": "Model",
-      "projectPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\Model.csproj",
+      "projectPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\Model.csproj",
       "packagesPath": "C:\\Users\\nechy\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nechy\\source\\repos\\ForGoodTime\\Model\\obj\\",
+      "outputPath": "C:\\Users\\nechy\\OneDrive\\Рабочий стол\\ForGoodTime\\ForGoodTime\\Model\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
