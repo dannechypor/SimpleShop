@@ -1,0 +1,14 @@
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Shop.DAL.deps.json
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Shop.DAL.runtimeconfig.json
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Shop.DAL.runtimeconfig.dev.json
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Shop.DAL.dll
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Shop.DAL.pdb
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Model.dll
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\bin\Release\netcoreapp2.1\Model.pdb
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.csprojAssemblyReference.cache
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.csproj.CoreCompileInputs.cache
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.AssemblyInfoInputs.cache
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.AssemblyInfo.cs
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.csproj.CopyComplete
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.dll
+C:\Users\nechy\source\repos\ForGoodTime\Shop.DAL\obj\Release\netcoreapp2.1\Shop.DAL.pdb

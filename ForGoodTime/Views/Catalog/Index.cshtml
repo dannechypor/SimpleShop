@@ -1,0 +1,194 @@
+﻿@using Model.Models
+@model CatalogProductListViewModel
+
+@*<section class="breadcrumb breadcrumb_bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="breadcrumb_iner">
+                        <div class="breadcrumb_iner_item">
+                            <h2>Shop Category</h2>
+                            <p>Home <span>-</span> Shop Category</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>*@
+<!-- breadcrumb start-->
+<!--================Category Product Area =================-->
+<section class="cat_product_area section_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="left_sidebar_area">
+                    <aside class="left_widgets p_filter_widgets">
+                        <div class="l_w_title">
+                            <h3>Categosry</h3>
+                        </div>
+                        <div class="widgets_inner">
+                            <ul class="list">
+                                @foreach (var item in Model.Categories)
+                                {
+                                    <li>
+                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.CategoryId">@item.Name</a>
+                                        @if (item.CategoryId == Model.Product.CategoryId)
+                                        {
+                                            @if (Model.IndexViewModel.Products != null)
+                                            {
+                                                <span>(@Model.IndexViewModel.PageViewModel.Count)</span>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <span>(0)</span>
+                                        }
+                                        @if (item.CategoryId == 0)
+                                        {
+
+                                        }
+                                    </li>
+                                }
+                                <li>
+                                    <a asp-controller="Catalog" asp-action="Index" asp-route-Id="">All product</a>
+                                    <span>(@Model.IndexViewModel.PageViewModel.Count)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </aside>
+                 
+                    <aside class="left_widgets p_filter_widgets">
+                        <div class="l_w_title">
+                            <h3>Manufacturers</h3>
+                        </div>
+                        <div class="widgets_inner">
+                            <ul class="list">
+                                @foreach (var item in Model.Manufacturers)
+                                {
+                                    <li>
+                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.ManufacturerId">@item.Name</a>
+
+                                        <span>(250)</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </aside>
+
+                    <aside class="left_widgets p_filter_widgets price_rangs_aside">
+                        <div class="l_w_title">
+                            <h3>Price Filter</h3>
+                        </div>
+
+                        <div class="widgets_inner">
+                            <div class="range_item">
+                                <!-- <div id="slider-range"></div> -->
+                                <input type="text" class="js-range-slider" value="" />
+                                <div class="d-flex">
+                                    <div class="price_text">
+                                        <p>Price :</p>
+                                    </div>
+                                    <div class="price_value d-flex justify-content-center">
+                                        <input type="text" class="js-input-from" id="amount" readonly />
+                                        <span>to</span>
+                                        <input type="text" class="js-input-to" id="amount" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="product_top_bar d-flex justify-content-between align-items-center">
+                            <div class="single_product_menu">
+                                <p> Finded products : <span> @Model.IndexViewModel.PageViewModel.Count </span></p>
+                            </div>
+
+
+                            <div class="single_product_menu d-flex">
+                                <h5>
+                                    Sort by :
+                                    <span>
+                                        <a asp-action="Index" asp-route-sortOrder="@(Model.IndexViewModel.SortViewModel.PriceSort)"
+                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
+                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)">По зростанню/спаданню ціни</a>
+                                    </span>
+                                </h5>
+                            </div>
+                            <div class="single_product_menu d-flex">
+                                <form method="get">
+                                    <div class="input-group">
+                                        @Html.TextBox("name", Model.IndexViewModel.FilterViewModel.SelectedName, htmlAttributes: new { @class = "form-control", @placeholder = "Пошук" })
+
+
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroupPrepend">
+                                                <i class="ti-search"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center latest_product_inner">
+
+                    @foreach (var item in Model.IndexViewModel.Products)
+                    {
+                        <div class="col-lg-4 col-sm-6">
+                            <div class="single_product_item">
+                                <img src="@item.ImageUrl_1" alt="">
+                                <a asp-controller="Catalog" asp-action="Details" asp-route-Id="@item.Id">@item.Name</a>
+                                <div class="single_product_text">
+                                    <h3>@item.Price $</h3>
+                                    <a asp-action="AddToShoppingCartGet" asp-controller="ShoppingCart" asp-route-Id="@item.Id" class="add_cart">+ to cart</a>
+                                    <a asp-action="AddToWhishList" asp-controller="WishList" asp-route-Id="@item.Id">+ to WishList</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="col-lg-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <ul class="pagination">
+                                    @if (Model.IndexViewModel.PageViewModel.HasPreviousPage)
+                                    {
+                                        <a asp-action="Index"
+                                           asp-route-page="@(Model.IndexViewModel.PageViewModel.Page - 1)"
+                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
+                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)"
+                                           asp-route-sortorder="@(Model.IndexViewModel.SortViewModel.Current)"
+                                           class="page-item page-link pagination align-items-center ">
+                                            Back
+                                        </a>
+                                    }
+                                    @if (Model.IndexViewModel.PageViewModel.HasNextPage)
+                                    {
+                                        <a asp-action="Index"
+                                           asp-route-page="@(Model.IndexViewModel.PageViewModel.Page + 1)"
+                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
+                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)"
+                                           asp-route-sortorder="@(Model.IndexViewModel.SortViewModel.Current)"
+                                           class="page-item page-link pagination align-items-center ">
+                                            Next
+                                        </a>
+                                    }
+                                </ul>
+                            </ul>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@await Component.InvokeAsync("TopSellingProductsSummary")
+
+

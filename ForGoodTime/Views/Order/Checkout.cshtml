@@ -1,0 +1,78 @@
+﻿@using Model.Models
+@model OrderViewModel
+
+
+<section class="checkout_area padding_top">
+    <div class="container">
+
+        @*<div class="cupon_area">
+                <div class="check_title">
+                    <h2>
+                        Have a coupon?
+                        <a href="#">Click here to enter your code</a>
+                    </h2>
+                </div>
+                <input type="text" placeholder="Enter coupon code" />
+                <a class="tp_btn" href="#">Apply Coupon</a>
+            </div>*@
+        <div class="billing_details">
+            <div class="row">
+                <form asp-action="Checkout" asp-controller="Order" class="row contact_form" method="post">
+                    <div class="col-lg-8">
+
+                        <h3>Confirmation details</h3>
+
+                        <div class="col-md-6 form-group p_star">
+                            <input asp-for="FirstName"  class="form-control"/>
+                            <span asp-validation-for="FirstName"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName"></span>
+                        </div>
+                        @*<div class="col-md-12 form-group">
+                    <input type="text" class="form-control" id="company" name="company" placeholder="Company name" />
+                </div>*@
+                        <div class="col-md-6 form-group p_star">
+                            <input asp-for="PhoneNumber" type="text" class="form-control"/>
+                            <span asp-validation-for="PhoneNumber" ></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input asp-for="Email" type="text" class="form-control"/>
+                            <span asp-validation-for="Email" ></span>
+                        </div>
+                        @*<div class="col-md-12 form-group p_star">
+                    <select class="country_select">
+                        <option value="1">Country</option>
+                        <option value="2">Country</option>
+                        <option value="4">Country</option>
+                    </select>
+                </div>*@
+                        <div class="col-md-12 form-group p_star">
+                            <input asp-for="Address" type="text" class="form-control" />
+                            <span asp-validation-for="FirstName" ></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <div class="creat_account">
+                                <h3>Message</h3>
+                            </div>
+                            <textarea class="form-control" name="message" id="message" rows="1"
+                                      placeholder="Текст"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4 float-right">
+                        <div class="order_box">
+                            @await Component.InvokeAsync("OrderSummary")
+                            <button type="submit" class="btn_3">Confirm</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

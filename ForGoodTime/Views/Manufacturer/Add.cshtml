@@ -1,0 +1,25 @@
+﻿@model Model.Models.ManufacturerViewModel
+
+<div class="container box_1170 border-top-generic">
+    <div class="section padding_top">
+        <div class="row">
+            <div class="col-lg-8">
+                <form asp-action="Add" asp-controller="Manufacturer">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="col-md-8 form-group ">
+                        <label asp-for="Name" class="control-label">Name</label>
+                        <input type="text" asp-for="Name" class="form-control" />
+                    </div>
+                    <div class="col-md-8 form-group">
+                      <button class="btn_3" type="submit" >Add</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

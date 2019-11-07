@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Model.Entities.ApplicationUser>
+@{
+    ViewBag.Title = "List of users";
+}
+
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    @*<h3 class="mb-30">Table</h3>*@
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>FullName</th>
+                                <th>Address</th>
+                                <th>PhoneNumber</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        @foreach (var user in Model)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@user.Email</td>
+                                    <td>@user.FirstName @user.LastName</td>
+                                    <td>@user.Address</td>
+
+                                    <td>@user.PhoneNumber</td>
+                                    <td>
+                                        <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                                            <a asp-action="Edit" asp-route-id="@user.Id"><i class="fas fa-user-cog"></i></a>
+                                            <a asp-action="ChangePassword" asp-route-id="@user.Id"><i class="fas fa-key"></i></a>
+                                            <button type="submit" class="hide">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        }
+                    </table>
+                    <a asp-controller="Users" asp-action="Create" class="btn btn-success">Add</a>
+                </div>
+            </div>
+        </div>
+    </div>
+

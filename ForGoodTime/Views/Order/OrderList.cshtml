@@ -1,0 +1,120 @@
+﻿@using Model.Models
+@using Microsoft.AspNetCore.Identity
+@using Model.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@model MyOrderViewModel
+
+@if (Model.Orders.Count() <= 0)
+{
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    <p>You do not have orders!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th>User Details</th>
+                                <th>Order Details</th>
+
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                 {
+                                    <th>Action</th>
+                                 }
+                                else
+                                {
+                                    <th>Status</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                         @foreach (var order in Model.Orders)
+                          {
+                            <tr>
+                                <td class="text-justify">
+                                    <div>
+                                        @order.Orders.FirstName @order.Orders.LastName,
+                                      
+                                    </div>
+                                    <div>
+                                        @order.Orders.Address
+                                    </div>
+                                    <div>@order.Orders.PhoneNumber</div>
+                                    <div>@order.Orders.Email</div>
+                                    <br />
+                                    <div>
+                                        @order.Orders.OrderPlaced.ToString("dd/MM/yyyy")
+                                    </div>
+                                </td>
+                                <td>
+                                    <table class="table">
+                                        <tbody>
+                                            @foreach (var item in order.ProductOrderInfos)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <img src="@item.Image" width="60" height="40" alt="" />
+                                                    </td>
+                                                    <td>
+                                                        @item.Name
+                                                    </td>
+                                                    <td>
+                                                        Qty <br> @item.Amount
+                                                    </td>
+                                                    <td>
+                                                        Price <br> @(item.Price * item.Amount) грн
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <div>
+                                            <form asp-controller="Order" asp-action="OrderList">
+                                                <button type="submit"><i class="fa fa-check"></i></button>
+                                                <select asp-for="Statust.Status" asp-items="Html.GetEnumSelectList<@Model.Entities.Enums.OrderStatus>()">
+                                                    <option value="@order.Orders.Status" data-display="@order.Orders.Status">@order.Orders.Status </option>
+
+                                                    @*<option value="@order.Orders.Status">@order.Orders.Status</option>*@
+                                                </select>
+                                                <input type="hidden" asp-for="Statust.OrderId" value="@order.Orders.OrderId" />
+
+                                            </form>                                         
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <div>
+                                            @order.Orders.Status
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                          }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}

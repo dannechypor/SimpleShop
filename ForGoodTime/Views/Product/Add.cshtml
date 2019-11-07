@@ -1,0 +1,97 @@
+﻿@model Model.Models.AddProductViewModel
+
+<div class="container box_1170 border-top-generic">
+    <div class="section padding_top">
+        <div class="row">          
+                <div class="col-lg-8">
+                    <form asp-controller="Product" asp-action="Add" class="row contact_form">
+                        @*<div asp-validation-summary="All" class="text-danger"></div>*@
+                        <div class="col-md-8 form-group ">
+                            <div class="form-select" id="default-select">
+                                <select asp-for="Product.CategoryId">
+                                    <option value="">Chouse category</option>
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                    <option value="@category.CategoryId">@category.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Product.CategoryId"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <div class="form-select" id="default-select">
+                                <select asp-for="Product.ManufacturerId">
+                                    <option value="">Chouse manufacturer</option>
+                                    @foreach (var manufacturer in Model.Manufacturers)
+                                    {
+                                    <option value="@manufacturer.ManufacturerId">@manufacturer.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Product.ManufacturerId"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-8 form-group ">
+
+                            <input asp-for="Product.Name" class="form-control" placeholder="Product name" value="">
+                            <span asp-validation-for="Product.Name" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.ShortDescription" class="form-control" placeholder="Short Description" value="">
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.LongDescription" class="form-control" placeholder="Long Description" value="">
+                        </div>
+                        <div class="col-md-8 form-group ">
+
+                        </div>
+                      
+                        <div class="col-md-8 ">
+                            <span class="input-group-addon "></span>
+                            <div style="overflow: hidden;">
+                                <div style="width: 100%;">
+                                    <div style="float: left;  padding: 1%; width: 33.3%; height: 50%;">
+                                        <input asp-for="Product.Higth" class="form-control " placeholder="Hight " value="">
+                                    </div>
+                                    <div style="float: left; padding: 1%; width: 33.3%; height: 50%;">
+                                        <input asp-for="Product.Width" class="form-control " placeholder="Width " value="">
+                                    </div>
+                                    <div style="float: left; width: 33.3%;  padding: 1%; height: 50px;">
+                                        <input asp-for="Product.Deepth" class="form-control " placeholder="Deepth " value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.Price" class="form-control" placeholder="Price " value="">
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.ImageUrl_1" class="form-control" placeholder="URL 1 " value="">
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.ImageUrl_2" class="form-control" placeholder="URL 2 " value="">
+                        </div>
+                        <div class="col-md-8 form-group ">
+                            <span class="input-group-addon"></span>
+                            <input asp-for="Product.ImageUrl_3" class="form-control" placeholder="URL 3 " value="">
+                        </div>
+
+
+                        <div class="col-md-8 form-group ">
+                            <input type="submit" value="Save" class="btn_3 button-contactForm" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@*@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}*@
+

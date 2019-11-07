@@ -1,0 +1,92 @@
+﻿@using ForGoodTime.Views.Shared.Components.ShoppingCartSummary
+@model ShoppingCartViewModel
+
+
+@if (Model.ShoppingCart.ShoppingCartItems?.Count() <= 0)
+{
+
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <h2>Cart <i class="fa fa-shopping-cart" aria-hidden="true"></i> </h2>
+            <br />
+            <h6>Opps! Your Cart is empty !</h6>
+        </div>
+    </div>
+    return;
+}
+
+<section class="cart_area padding_top">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Ammount</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="media">
+                                        <div class="d-flex">
+                                            <img src="@item.Product.ImageUrl_1" width="130" height="100" alt="" />
+                                        </div>
+                                        <div class="media-body">
+                                            <p>@item.Product.Name</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5>@item.Product.Price $</h5>
+                                </td>
+
+                                <td>
+                                    <form class="d-inline align-middle" asp-action="RemoveFromShoppingCart"
+                                          asp-controller="ShoppingCart"
+                                          asp-route-Id="@item.ProductId"
+                                          method="post">
+                                        <button class="btn fa fa-minus fa-small" aria-hidden="true"></button>
+                                    </form>
+                                    <span style="padding:1px 10px">@item.Amount</span>
+                                    <form class="d-inline align-middle" asp-action="AddToShoppingCart"
+                                          asp-controller="ShoppingCart"
+                                          asp-route-Id="@item.ProductId"
+                                          method="post">
+                                        <button class="btn fa fa-plus fa-small" aria-hidden="true"></button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <h5>
+                                        @((item.Product.Price * item.Amount)) $
+                                    </h5>
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="3"><h5>Total sume : </h5></td>
+                            <td><h5>@Model.ShoppingCartTotal $</h5></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="checkout_btn_inner float-left">                  
+                    <a class="btn_1" asp-action="RemoveAllCart" asp-controller="ShoppingCart">
+                        Clean
+                    </a>                   
+                 </div>
+
+                    <div class="checkout_btn_inner float-right">
+                      
+                        <a class="btn_1 checkout_btn_1" asp-controller="Order" asp-action="Checkout">Checkout</a>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+</section>

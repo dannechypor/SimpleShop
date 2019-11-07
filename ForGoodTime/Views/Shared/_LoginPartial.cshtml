@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Model.Entities
+@using System.Security.Claims
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+            <li class="nav-item dropdown">
+                <a asp-area="Profile" class="nav-link dropdown-toggle" id="navbarDropdown_3">Hello, @UserManager.GetUserAsync(User).Result.FirstName @UserManager.GetUserAsync(User).Result.LastName !</a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a asp-controller="Profile" asp-action="Index" class="dropdown-item">Profile</a>
+                    <a asp-area="Users" asp-controller="Users" asp-action="Index" class="dropdown-item">Manage users</a>
+                    <a asp-area="Product" asp-controller="Product" asp-action="Index" class="dropdown-item">Manage products</a>
+                    <a asp-area="Category" asp-controller="Category" asp-action="Index" class="dropdown-item">Manage categories</a>
+                    <a asp-area="Manufacturer" asp-controller="Manufacturer" asp-action="Index" class="dropdown-item">Manage manufacturers </a>
+                    <a asp-area="Order" asp-controller="Order" asp-action="OrderList" class="dropdown-item">Manage orders </a>
+                    <a asp-controller="Account" asp-action="Logout" class="dropdown-item">Logout</a>
+                </div>
+            </li>    
+
+    }
+    else
+    {
+    <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown_3">Привіт, @UserManager.GetUserAsync(User).Result.FirstName @UserManager.GetUserAsync(User).Result.LastName !</a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a asp-controller="Profile" asp-action="Index" class="dropdown-item">Profile</a>
+            <a asp-controller="WishList" asp-action="Index" class="dropdown-item">WishList</a>
+            <a asp-controller="Order" asp-action="OrderList" class="dropdown-item">Purchases</a>
+            <a class="dropdown-item" href="#">Review</a>
+            <a asp-controller="Account" asp-action="Logout" class="dropdown-item">Logout</a>
+        </div>
+    </li>
+    }
+}
+else
+{  
+    <li class="nav-item">
+         <a asp-controller="Account" asp-action="Login" class="nav-link" >Login</a>
+    </li>        
+}

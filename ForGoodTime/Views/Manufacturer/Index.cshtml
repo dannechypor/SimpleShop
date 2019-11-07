@@ -1,0 +1,33 @@
+﻿@using Model.Entities
+@model List<Manufacturer>
+
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    <table class="table">
+                        <tr><th>Id</th><th>Manufacturer</th><th>Qty</th><th>Actions</th></tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ManufacturerId</td>
+                                <td>@item.Name</td>
+                                <td>#</td>
+                                <td>
+                                    <form asp-action="Delete" asp-route-id="@item.ManufacturerId" method="post">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                    <a asp-action="Add" class="btn btn-success">Add Manufacturer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

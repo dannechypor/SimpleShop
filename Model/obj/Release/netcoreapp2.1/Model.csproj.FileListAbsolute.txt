@@ -1,0 +1,11 @@
+C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.deps.json
+C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.runtimeconfig.json
+C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.runtimeconfig.dev.json
+C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.dll
+C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.pdb
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.csprojAssemblyReference.cache
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.csproj.CoreCompileInputs.cache
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.AssemblyInfoInputs.cache
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.AssemblyInfo.cs
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.dll
+C:\Users\nechy\source\repos\ForGoodTime\Model\obj\Release\netcoreapp2.1\Model.pdb

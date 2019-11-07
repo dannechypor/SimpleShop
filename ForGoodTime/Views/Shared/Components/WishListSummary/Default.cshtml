@@ -1,0 +1,25 @@
+﻿@using Model.Models
+@model CountViewModel
+@if (User.Identity.IsAuthenticated)
+{
+    @if (Model.Count > 0)
+    {
+        <a asp-controller="WishList" asp-action="Index" class="dropdown-toggle" id="navbarDropdown3" role="button">
+            <i title="@Model.Count" class="ti-heart"></i>
+        </a>
+
+    }
+    else
+    {
+
+        <a asp-controller="WishList" asp-action="Index" class="dropdown-toggle" id="navbarDropdown3" role="button">
+            <i title="0" class="ti-heart"></i>
+        </a>
+    }
+}
+else
+{
+    <a href="#"  class="dropdown-toggle" id="navbarDropdown3" role="button">
+        <i title="0" class="ti-heart"></i>
+    </a>
+}

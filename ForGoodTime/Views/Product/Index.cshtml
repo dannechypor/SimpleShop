@@ -1,0 +1,56 @@
+﻿@using Model.Entities
+@model List<Product>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+
+<div class="container box_1170 border-top-generic">
+    <div class="section padding_top">
+        <div class="row">
+            @await Html.PartialAsync("_PartialMenu")
+            <div class="col-md-9">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr><th>Id</th><th>Name</th><th>Description</th><th>Deepth</th><th>Hight</th><th>Width</th><th>Price</th><th>Date</th><th>InStock</th><th>Action</th></tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tbody>
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Name </td>
+                                <td>@item.ShortDescription</td>
+                               
+                                <td>@item.Deepth</td>
+                                <td>@item.Hight</td>
+                                <td>@item.Width</td>
+                                <td>@item.Price</td>
+                                <td>@item.Date</td>
+
+                                @if (item.InStock == true)
+                                {
+                                    <td> In Stock</td>
+                                }
+                                else
+                                {
+                                    <td> Not In Stock</td>
+                                }
+                                <td>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    }
+                </table>
+
+                <a asp-action="Add" asp-controller="Product" class="btn btn-success">Add new Product</a>
+            </div>
+        </div>
+    </div>
+</div>

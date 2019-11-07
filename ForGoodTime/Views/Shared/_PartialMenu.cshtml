@@ -1,0 +1,28 @@
+﻿
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div class="col-md-3 ">
+        <div class="list-group ">
+            <a asp-controller="Profile" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Profile" ? "active" : "")">Profile</a>
+            <a asp-area="Users" asp-controller="Users" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")">Manage users</a>
+            <a asp-area="Product" asp-controller="Product" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">Manage products</a>
+            <a asp-area="Category" asp-controller="Category" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Category" ? "active" : "")">Manage categories</a>
+            <a asp-area="Manufacturer" asp-controller="Manufacturer" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Manufacturer" ? "active" : "")">Manage manufacturers </a>
+            <a asp-area="Order" asp-controller="Order" asp-action="OrderList" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")">Manage orders </a>
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="col-md-3 ">
+        <div class="list-group ">
+            <a asp-controller="Profile" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "Profile" ? "active" : "")">Profile</a>          
+            <a asp-controller="WishList" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"].ToString() == "WishList" ? "active" : "")">WishList</a>
+            <a asp-controller="Order" asp-action="OrderList" class="list-group-item list-group-item-action  @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")"> Purchases</a>
+            <a class="list-group-item list-group-item-action" href="#">Review</a>
+
+        </div>
+    </div>
+}

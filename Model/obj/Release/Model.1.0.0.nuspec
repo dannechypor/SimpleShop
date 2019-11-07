@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Model</id>
+    <version>1.0.0</version>
+    <authors>Model</authors>
+    <owners>Model</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework=".NETCoreApp2.1">
+        <dependency id="AutoMapper.Extensions.Microsoft.DependencyInjection" version="7.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.App" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Identity.EntityFrameworkCore" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Razor.Design" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.Design" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.VisualStudio.Web.CodeGeneration.Design" version="2.1.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.runtimeconfig.json" target="lib\netcoreapp2.1\Model.runtimeconfig.json" />
+    <file src="C:\Users\nechy\source\repos\ForGoodTime\Model\bin\Release\netcoreapp2.1\Model.dll" target="lib\netcoreapp2.1\Model.dll" />
+  </files>
+</package>

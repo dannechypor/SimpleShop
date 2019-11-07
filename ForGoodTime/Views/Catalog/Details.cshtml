@@ -1,0 +1,390 @@
+﻿@using Model.Models
+@model CatalogProductListViewModel
+
+  
+
+<div class="product_image_area section_padding">
+    <div class="container">
+        <div class="row s_product_inner justify-content-between">
+            <div class="col-lg-7 col-xl-7">
+                <div class="product_slider_img">
+                    <div id="vertical">
+                        <div data-thumb="@Model.Product.ImageUrl_1">
+                            <img src="@Model.Product.ImageUrl_1" />
+                        </div>
+                        <div data-thumb="@Model.Product.ImageUrl_2">
+                            <img src="@Model.Product.ImageUrl_2" />
+                        </div>
+                        <div data-thumb="@Model.Product.ImageUrl_3">
+                            <img src="@Model.Product.ImageUrl_3" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-xl-4">
+                <div class="s_product_text">
+                    <h3>@Model.Product.Name</h3>
+                    <h2>@Model.Product.Price $</h2>
+                    <ul class="list">
+                        <li>
+                            <a class="active" href="#">
+                                <span>Category</span> : @Model.Product.Category.Name
+                            </a>
+                        </li>
+                        <li>
+                            @if (Model.Product.InStock == true)
+                            {<a href="#"> <span>InStock</span> : є в наявності  </a> }
+                            else
+                            { <p href="#"> <span>InStock</span> : немає в наявності </p>}
+
+                        </li>
+                    </ul>
+                    <p>
+                        @Model.Product.ShortDescription
+                    </p>
+                    <div class="card_area d-flex justify-content-between align-items-center">
+                        <a href="#" class="btn_3">in cart</a>
+                        <a href="#" class="like_us"> <i class="ti-heart"></i> </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="product_description_area">
+    <div class="container">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                   aria-selected="true">Description</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                   aria-selected="false">Characteristics</a>
+            </li>
+         
+            <li class="nav-item">
+                <a class="nav-link active" id="review-tab" data-toggle="tab" href="#review" role="tab" aria-controls="review"
+                   aria-selected="false">Review</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <p>
+                    @Model.Product.LongDescription
+                </p>
+                <p>
+                    @Model.Product.ShortDescription
+                </p>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                          
+                            <tr>
+                                <td>
+                                    <h5>Deepth</h5>
+                                </td>
+                                <td>
+                                    <h5>@Model.Product.Deepth</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h5>Hight</h5>
+                                </td>
+                                <td>
+                                    <h5>@Model.Product.Hight</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h5>Width</h5>
+                                </td>
+                                <td>
+                                    <h5>@Model.Product.Width</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h5>Manufactirer</h5>
+                                </td>
+                                <td>
+                                    <h5>@Model.Product.Manufacturer.Name</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h5>
+                                        Quality check
+                                    </h5>
+                                </td>
+                                <td>
+                                    <h5>yes</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h5>Stock</h5>
+                                </td>
+                                @if (Model.Product.InStock == true)
+                                {
+                                    <td>
+                                        <h5>In Stock</h5>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <h5>Not In Stock</h5>
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+           
+            <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="row total_rate">
+                            <div class="col-6">
+                                <div class="box_total">
+                                    <h5>Оцінка</h5>
+                                    <h4>4.0</h4>
+                                    <h6>(03 Відгуки)</h6>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="rating_list">
+                                    <h3>Про товар 3 відгуки</h3>
+                                    <ul class="list">
+                                        <li>
+                                            <a href="#">
+                                                5 Star
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> 01
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                4 Star
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> 01
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                3 Star
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> 01
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                2 Star
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> 01
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                1 Star
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> 01
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review_list">
+                            <div class="review_item">
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src="img/product/single-product/review-1.png" alt="" />
+                                    </div>
+                                    <div class="media-body">
+                                        <h4>Blake Ruiz</h4>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna
+                                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                    ullamco laboris nisi ut aliquip ex ea commodo
+                                </p>
+                            </div>
+                            <div class="review_item">
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src="img/product/single-product/review-2.png" alt="" />
+                                    </div>
+                                    <div class="media-body">
+                                        <h4>Blake Ruiz</h4>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna
+                                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                    ullamco laboris nisi ut aliquip ex ea commodo
+                                </p>
+                            </div>
+                            <div class="review_item">
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src="img/product/single-product/review-3.png" alt="" />
+                                    </div>
+                                    <div class="media-body">
+                                        <h4>Blake Ruiz</h4>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna
+                                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                    ullamco laboris nisi ut aliquip ex ea commodo
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    @*///////////////////////////////////////////////////////////////////////////////////////////////*@
+                <div class="col-lg-6">
+                    <form class="row contact_form" method="post" asp-action="Details" asp-controller="Catalog">
+                        <div class="review_box">
+                            <h4>Add review</h4>
+                            <p>Your Rating:</p>
+
+
+
+                            <span class="rating">
+
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var starClass = "star";
+                                    if (Model.Review.Rating == 6 - i)
+                                    {
+                                        starClass += " active";
+                                    }
+                                    <span data-value="@(6 - i)" class="@starClass"></span>
+                                }
+
+                            </span>
+                            <input asp-for="Review.Rating"/>
+
+                        </div>
+                            <p>Outstanding</p>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea asp-for="Review.Text" class="form-control w-100" cols="30" rows="9" placeholder="Review"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-right">
+                                <button type="submit" value="submit" class="btn_3">
+                                    Add
+                                </button>
+                            </div>
+</form>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product_list best_seller">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="section_tittle text-center">
+                    <h2>Best Sellers <span>shop</span></h2>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-between">
+            <div class="col-lg-12">
+                <div class="best_product_slider owl-carousel">
+                    <div class="single_product_item">
+                        <img src="img/product/product_1.png" alt="">
+                        <div class="single_product_text">
+                            <h4>Quartz Belt Watch</h4>
+                            <h3>$150.00</h3>
+                        </div>
+                    </div>
+                    <div class="single_product_item">
+                        <img src="img/product/product_2.png" alt="">
+                        <div class="single_product_text">
+                            <h4>Quartz Belt Watch</h4>
+                            <h3>$150.00</h3>
+                        </div>
+                    </div>
+                    <div class="single_product_item">
+                        <img src="img/product/product_3.png" alt="">
+                        <div class="single_product_text">
+                            <h4>Quartz Belt Watch</h4>
+                            <h3>$150.00</h3>
+                        </div>
+                    </div>
+                    <div class="single_product_item">
+                        <img src="img/product/product_4.png" alt="">
+                        <div class="single_product_text">
+                            <h4>Quartz Belt Watch</h4>
+                            <h3>$150.00</h3>
+                        </div>
+                    </div>
+                    <div class="single_product_item">
+                        <img src="img/product/product_5.png" alt="">
+                        <div class="single_product_text">
+                            <h4>Quartz Belt Watch</h4>
+                            <h3>$150.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <script src="~/js/rating.js"></script>
+
+}
+

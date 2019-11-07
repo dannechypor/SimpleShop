@@ -1,0 +1,70 @@
+﻿@using Model.Models
+@model PersonViewModel
+
+<div class="container box_1170 border-top-generic">
+    <div class="section padding_top">
+        <div class="row">
+            @await Html.PartialAsync("_PartialMenu")
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Ваш профіль</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form method="post" enctype="multipart/form-data">
+                                    <div class="form-group row">
+                                        <label for="name" class="col-4 col-form-label">Ім'я</label>
+                                        <div class="col-8">
+                                            <input asp-for="FirstName" placeholder="@Model.FirstName" class="form-control here" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-4 col-form-label">LastName</label>
+                                        <div class="col-8">
+                                            <input asp-for="LastName" placeholder="@Model.LastName" class="form-control here" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-4 col-form-label">Email</label>
+                                        <div class="col-8">
+                                            <input asp-for="Email"  placeholder="@Model.Email" class="form-control here"  type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-4 col-form-label">Phone Number</label>
+                                        <div class="col-8">
+                                            <input asp-for="PhoneNumber" placeholder="@Model.PhoneNumber" class="form-control here"  type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-4 col-form-label">Address</label>
+                                        <div class="col-8">
+                                            <input asp-for="Address" placeholder="@Model.Address" class="form-control here" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">                                                                                                                 
+                                        <div class="offset-4 col-8">
+                                            
+                                            <button name="submit" type="submit" class="btn_3">Update profile</button>
+                                            <a asp-controller="Profile" asp-action="ChangePassword" class="btn_3">Change password</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

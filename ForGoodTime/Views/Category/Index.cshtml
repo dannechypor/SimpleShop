@@ -1,0 +1,37 @@
+﻿@using Model.Models
+@model CategoryListViewModel
+@{
+    ViewData["Title"] = "Categories";
+}
+
+
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    <table class="table">
+                        <tr><th>Id</th><th>Category</th><th>Qty</th><th>Change</th></tr>
+                        @foreach (var item in Model.Categories)
+                        {
+                            <tr>
+                                <td>@item.CategoryId</td>
+                                <td>@item.Name</td>
+                                <td>#</td>
+                                <td>
+                                    <form asp-action="Delete" asp-route-id="@item.CategoryId" method="post">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                    <a asp-action="Add" class="btn btn-success">Добавити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

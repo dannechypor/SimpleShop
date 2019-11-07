@@ -1,0 +1,14 @@
+﻿@using Model.Models
+@model CategoryListViewModel
+
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown_3">Products</a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            @foreach (var item in Model.Categories)
+            {
+            <a asp-action="Index" asp-controller="Catalog" asp-route-id="@item.CategoryId" class="dropdown-item">@item.Name</a>
+            }
+        </div>
+    </li>
+
