@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,7 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-builder.Services.AddAutoMapper(typeof(Startup).Assembly);
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddMvc();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
