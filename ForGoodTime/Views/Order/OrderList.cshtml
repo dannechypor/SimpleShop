@@ -91,7 +91,7 @@ else
                                         <div>
                                             <form asp-controller="Order" asp-action="OrderList">
                                                 <button type="submit"><i class="fa fa-check"></i></button>
-                                                <select asp-for="Statust.Status" asp-items="Html.GetEnumSelectList<@Model.Entities.Enums.OrderStatus>()">
+                                                <select asp-for="Statust.Status" asp-items="Html.GetEnumSelectList<Model.Entities.Enums.OrderStatus>()">
                                                     <option value="@order.Orders.Status" data-display="@order.Orders.Status">@order.Orders.Status </option>
 
                                                     @*<option value="@order.Orders.Status">@order.Orders.Status</option>*@

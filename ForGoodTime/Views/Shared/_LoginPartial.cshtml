@@ -1,7 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Model.Entities
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @if (SignInManager.IsSignedIn(User))
@@ -9,14 +7,14 @@
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
     {
             <li class="nav-item dropdown">
-                <a asp-area="Profile" class="nav-link dropdown-toggle" id="navbarDropdown_3">Hello, @UserManager.GetUserAsync(User).Result.FirstName @UserManager.GetUserAsync(User).Result.LastName !</a>
+                <a class="nav-link dropdown-toggle" id="navbarDropdown_3">Hello, @UserManager.GetUserAsync(User).Result.FirstName @UserManager.GetUserAsync(User).Result.LastName !</a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <a asp-controller="Profile" asp-action="Index" class="dropdown-item">Profile</a>
-                    <a asp-area="Users" asp-controller="Users" asp-action="Index" class="dropdown-item">Manage users</a>
-                    <a asp-area="Product" asp-controller="Product" asp-action="Index" class="dropdown-item">Manage products</a>
-                    <a asp-area="Category" asp-controller="Category" asp-action="Index" class="dropdown-item">Manage categories</a>
-                    <a asp-area="Manufacturer" asp-controller="Manufacturer" asp-action="Index" class="dropdown-item">Manage manufacturers </a>
-                    <a asp-area="Order" asp-controller="Order" asp-action="OrderList" class="dropdown-item">Manage orders </a>
+                    <a asp-controller="Users" asp-action="Index" class="dropdown-item">Manage users</a>
+                    <a asp-controller="Product" asp-action="Index" class="dropdown-item">Manage products</a>
+                    <a asp-controller="Category" asp-action="Index" class="dropdown-item">Manage categories</a>
+                    <a asp-controller="Manufacturer" asp-action="Index" class="dropdown-item">Manage manufacturers </a>
+                    <a asp-controller="Order" asp-action="OrderList" class="dropdown-item">Manage orders </a>
                     <a asp-controller="Account" asp-action="Logout" class="dropdown-item">Logout</a>
                 </div>
             </li>    

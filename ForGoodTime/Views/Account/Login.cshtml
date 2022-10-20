@@ -1,11 +1,7 @@
 ﻿
 @model Model.Models.LoginViewModel
-@using System.Collections.Generic
-@using System.Linq
 @using Microsoft.AspNetCore.Identity
 @using Model.Entities
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Http.Authentication
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject SignInManager<ApplicationUser> SignInManager
 @{
@@ -31,7 +27,7 @@
                     <div class="login_part_form_iner">
                         <h3 class="text-center">
 
-                            Welcome Back !</br>
+                            Welcome Back !<br/>
                             Please Sign in now
                         </h3>
 
