@@ -14,7 +14,7 @@ namespace Shop.BLL.Interfaces
     {
         Task AddToWhishList([FromForm]WishListDTO wishListDto);
         List<Product> GetAllProductIdByUser(string userId);
-        int GetCountOfWishList(string userId);
+        int GetCountOfWishList(string? userId);
         Task<OperationDetails> DeleteRelationship(int productID, string userId);
 
 

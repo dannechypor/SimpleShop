@@ -47,33 +47,38 @@ namespace Shop.BLL.Services
 
         }
 
-        public List<Product> GetAllProductIdByUser(string userId )
+        public List<Product> GetAllProductIdByUser(string userId)
         {
-             List<Product> myWishLists = new List<Product>();
+            var myWishLists = new List<Product>();
 
             var products = Database.WishListPrepository.All().Where(e => e.UserId == userId).ToList();
-                  //.Include(e => e.ProductId)
-                  //.Select(e => new Product
-                  //{
-                  //    Id = e.ProductId
-                  //})
-                  //.ToList();
+            //.Include(e => e.ProductId)
+            //.Select(e => new Product
+            //{
+            //    Id = e.ProductId
+            //})
+            //.ToList();
 
-           
-                foreach (var item in products)
-                {
-                    var tmp  = Database.ProductRepository.GetAll().Where(e=> e.Id == item.ProductId);
-                    myWishLists.Add(tmp.First());
-                }
+
+            foreach (var item in products)
+            {
+                var tmp = Database.ProductRepository.GetAll().Where(e => e.Id == item.ProductId);
+                myWishLists.Add(tmp.First());
+            }
 
 
             return myWishLists;
         }
 
-        public int GetCountOfWishList(string userId)
+        public int GetCountOfWishList(string? userId)
         {
-            var products = Database.WishListPrepository.All().Where(e => e.UserId == userId)
-                 .Include(e => e.ProductId)
+            if (userId == null)
+            {
+                return 0;
+            }
+
+            var products = Database.WishListPrepository.All()
+                .Where(e => e.UserId == userId)
                  .Select(e => new Product
                  {
                      Id = e.ProductId

@@ -10,6 +10,7 @@ using Model.Entities;
 using Shop.BLL.Interfaces;
 using Shop.BLL.Services;
 using Shop.DAL;
+using Shop.DAL.DbInitialze;
 using Shop.DAL.Interfaces;
 using Shop.DAL.Repositories;
 
@@ -19,7 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), x => x.MigrationsAssembly("Shop.DAL")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
@@ -85,6 +88,9 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+var service = scope.ServiceProvider.GetService<IUnitOfWork>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

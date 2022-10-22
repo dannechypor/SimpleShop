@@ -31,7 +31,7 @@
                             Please Sign in now
                         </h3>
 
-                        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="row contact_form">
+                        <form method="post" class="row contact_form">
                             <div class="col-md-12 text-danger" asp-validation-summary="All"></div>
                             <div class="col-md-12 form-group p_star">
                                 <input asp-for="Email" type="email" class="form-control" id="email" name="email" value=""
