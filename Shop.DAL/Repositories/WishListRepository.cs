@@ -18,7 +18,5 @@ namespace Shop.DAL.Repositories
         {
 
         }
-
-        
     }
 }

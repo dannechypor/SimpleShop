@@ -122,7 +122,7 @@ namespace ForGoodTime.Controllers
             var hasPassword = await _userManager.HasPasswordAsync(user);
             if (!hasPassword)
             {
-                return RedirectToAction(nameof(SetPassword));
+                // return RedirectToAction(nameof(SetPassword));
             }
 
             var model = new ChangeUserPasswordModel { StatusMessage = StatusMessage };
@@ -158,53 +158,53 @@ namespace ForGoodTime.Controllers
             return RedirectToAction(nameof(ChangePassword));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SetPassword()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+        // [HttpGet]
+        // public async Task<IActionResult> SetPassword()
+        // {
+        //     var user = await _userManager.GetUserAsync(User);
+        //     if (user == null)
+        //     {
+        //         throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //     }
+        //
+        //     var hasPassword = await _userManager.HasPasswordAsync(user);
+        //
+        //     if (hasPassword)
+        //     {
+        //         return RedirectToAction(nameof(ChangePassword));
+        //     }
+        //
+        //     var model = new SetPasswordViewModel { StatusMessage = StatusMessage };
+        //     return View(model);
+        // }
 
-            var hasPassword = await _userManager.HasPasswordAsync(user);
-
-            if (hasPassword)
-            {
-                return RedirectToAction(nameof(ChangePassword));
-            }
-
-            var model = new SetPasswordViewModel { StatusMessage = StatusMessage };
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var addPasswordResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
-            if (!addPasswordResult.Succeeded)
-            {
-                AddErrors(addPasswordResult);
-                return View(model);
-            }
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            StatusMessage = "Your password has been set.";
-
-            return RedirectToAction(nameof(SetPassword));
-        }
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return View(model);
+        //     }
+        //
+        //     var user = await _userManager.GetUserAsync(User);
+        //     if (user == null)
+        //     {
+        //         throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //     }
+        //
+        //     var addPasswordResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
+        //     if (!addPasswordResult.Succeeded)
+        //     {
+        //         AddErrors(addPasswordResult);
+        //         return View(model);
+        //     }
+        //
+        //     await _signInManager.SignInAsync(user, isPersistent: false);
+        //     StatusMessage = "Your password has been set.";
+        //
+        //     return RedirectToAction(nameof(SetPassword));
+        // }
 
         private void AddErrors(IdentityResult result)
         {
