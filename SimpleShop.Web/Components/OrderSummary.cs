@@ -2,7 +2,7 @@
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary;
 
-namespace ForGoodTime.Components;
+namespace SimpleShop.Web.Components;
 
 public class OrderSummary(IShoppingCartService shoppingCart) : ViewComponent
 {

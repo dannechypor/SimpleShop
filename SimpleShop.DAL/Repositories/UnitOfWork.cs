@@ -2,12 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Model.Entities;
-using Shop.DAL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Repositories;
+namespace SimpleShop.DAL.Repositories;
 
 public sealed class UnitOfWork(
     ApplicationDbContext dbContext,

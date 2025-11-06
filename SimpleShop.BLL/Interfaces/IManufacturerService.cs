@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shop.BLL.Infrastructure;
+using SimpleShop.BLL.Infrastructure;
 using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 

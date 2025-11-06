@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Model.DTO;
-using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Services;
+namespace SimpleShop.BLL.Services;
 
 public class WishListService(IUnitOfWork db, ApplicationDbContext context)
     : IWishListService

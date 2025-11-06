@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Model.Entities;
-using Model.ViewModels;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class UsersController : Controller

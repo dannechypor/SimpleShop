@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Model.Entities;
-using Shop.BLL.Interfaces;
-using Shop.BLL.Services;
-using Shop.DAL.Interfaces;
-using Shop.DAL.Repositories;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.BLL.Services;
 using SimpleShop.DAL.DbInitialze;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.DAL.Repositories;
+using SimpleShop.Model.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

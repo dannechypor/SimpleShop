@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model.DTO;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.ViewModels;
 
 namespace SimpleShop.Web.Controllers;
 

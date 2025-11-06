@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Model.DTO;
-using Model.Entities;
-using Model.ViewModels;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Mapping;
+namespace SimpleShop.Web.Mapping;
 
 public class AutoMapperProfile : Profile
 {

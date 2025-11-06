@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Model.DTO;
-using Shop.DAL.Interfaces;
 using SimpleShop.DAL.EF;
-using SimpleShop.DAL.Repositories;
+using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Repositories;
+namespace SimpleShop.DAL.Repositories;
 
 public class ProductRepository(ApplicationDbContext db) : Repository<Product>(db), IProductRepository
 {

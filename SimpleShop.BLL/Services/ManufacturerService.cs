@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Shop.BLL.Infrastructure;
+using SimpleShop.BLL.Infrastructure;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.DTO;

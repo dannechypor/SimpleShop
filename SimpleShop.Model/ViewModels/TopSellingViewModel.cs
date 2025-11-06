@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Model.DTO;
+using SimpleShop.Model.DTO;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class TopSellingViewModel
 {

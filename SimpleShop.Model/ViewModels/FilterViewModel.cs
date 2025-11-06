@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleShop.Model.Entities;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class FilterViewModel
 {

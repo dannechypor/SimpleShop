@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ForGoodTime.Extensions;
+namespace SimpleShop.Web.Extensions;
 
 public static class ControllerExtensions
 {

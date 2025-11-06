@@ -1,8 +1,7 @@
-﻿using Shop.DAL.Interfaces;
-using SimpleShop.DAL.EF;
-using SimpleShop.DAL.Repositories;
+﻿using SimpleShop.DAL.EF;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Repositories;
+namespace SimpleShop.DAL.Repositories;
 
 public class OrderRepository(ApplicationDbContext db) : Repository<Order>(db), IOrderRepository;

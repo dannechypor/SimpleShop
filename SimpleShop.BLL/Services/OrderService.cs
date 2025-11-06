@@ -6,14 +6,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Model.DTO;
-using Model.Entities.Enums;
-using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Infrastructure;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
+using SimpleShop.Model.Entities.Enums;
 
 namespace SimpleShop.BLL.Services;
 

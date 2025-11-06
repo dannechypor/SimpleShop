@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Model.Entities;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
@@ -18,21 +17,21 @@ public static class DbInitializer
 
         var adminUser = await CreateUserIfNotExistsAsync(
             db,
-            "admin@shop.local",
-            "Admin_12345",
-            "Admin",
-            "User",
-            "Main Street 1, Demo City",
-            "+10000000001");
+            email: "admin@shop.local",
+            password: "Admin_12345",
+            firstName: "Admin",
+            lastName: "User",
+            address: "Main Street 1, Demo City",
+            phoneNumber: "+10000000001");
 
         var customerUser = await CreateUserIfNotExistsAsync(
             db,
-            "customer@shop.local",
-            "Customer_12345",
-            "Customer",
-            "Demo",
-            "Customer Avenue 5, Demo City",
-            "+10000000002");
+            email: "customer@shop.local",
+            password: "Customer_12345",
+            firstName: "Customer",
+            lastName: "Demo",
+            address: "Customer Avenue 5, Demo City",
+            phoneNumber: "+10000000002");
 
         await EnsureUserInRoleAsync(db, adminUser, "Admin");
         await EnsureUserNotInRoleAsync(db, adminUser, "User");
@@ -43,7 +42,9 @@ public static class DbInitializer
         if (db.ProductRepository.GetAll().Any() ||
             db.CategoryRepository.GetAll().Any() ||
             db.ManufacturerRepository.GetAll().Any())
+        {
             return;
+        }
 
         var categories = new List<Category>
         {
@@ -124,44 +125,44 @@ public static class DbInitializer
         var products = new List<Product>();
 
         products.AddRange(CreateProducts(
-            "Cabinet",
-            1,
-            3500m,
-            cabinetShort,
-            cabinetLong,
-            cabinetImages,
-            new[] { 1, 4, 5, 7 },
-            itemsPerCategory));
+            baseName: "Cabinet",
+            categoryId: 1,
+            basePrice: 3500m,
+            shortDescription: cabinetShort,
+            longDescription: cabinetLong,
+            images: cabinetImages,
+            manufacturerIds: new[] { 1, 4, 5, 7 },
+            count: itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            "Table",
-            2,
-            2800m,
-            tableShort,
-            tableLong,
-            tableImages,
-            new[] { 2, 5, 8 },
-            itemsPerCategory));
+            baseName: "Table",
+            categoryId: 2,
+            basePrice: 2800m,
+            shortDescription: tableShort,
+            longDescription: tableLong,
+            images: tableImages,
+            manufacturerIds: new[] { 2, 5, 8 },
+            count: itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            "Sofa",
-            3,
-            5500m,
-            sofaShort,
-            sofaLong,
-            sofaImages,
-            new[] { 3, 6, 7 },
-            itemsPerCategory));
+            baseName: "Sofa",
+            categoryId: 3,
+            basePrice: 5500m,
+            shortDescription: sofaShort,
+            longDescription: sofaLong,
+            images: sofaImages,
+            manufacturerIds: new[] { 3, 6, 7 },
+            count: itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            "Chair",
-            4,
-            1600m,
-            chairShort,
-            chairLong,
-            chairImages,
-            new[] { 2, 4, 6, 8 },
-            itemsPerCategory));
+            baseName: "Chair",
+            categoryId: 4,
+            basePrice: 1600m,
+            shortDescription: chairShort,
+            longDescription: chairLong,
+            images: chairImages,
+            manufacturerIds: new[] { 2, 4, 6, 8 },
+            count: itemsPerCategory));
 
         db.ProductRepository.AddRange(products);
 
@@ -171,7 +172,9 @@ public static class DbInitializer
     private static async Task EnsureRoleAsync(IUnitOfWork db, string roleName)
     {
         if (!await db.RoleManager.RoleExistsAsync(roleName))
+        {
             await db.RoleManager.CreateAsync(new IdentityRole(roleName));
+        }
     }
 
     private static async Task<ApplicationUser> CreateUserIfNotExistsAsync(
@@ -209,12 +212,18 @@ public static class DbInitializer
 
     private static async Task EnsureUserInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
     {
-        if (!await db.UserManager.IsInRoleAsync(user, role)) await db.UserManager.AddToRoleAsync(user, role);
+        if (!await db.UserManager.IsInRoleAsync(user, role))
+        {
+            await db.UserManager.AddToRoleAsync(user, role);
+        }
     }
 
     private static async Task EnsureUserNotInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
     {
-        if (await db.UserManager.IsInRoleAsync(user, role)) await db.UserManager.RemoveFromRoleAsync(user, role);
+        if (await db.UserManager.IsInRoleAsync(user, role))
+        {
+            await db.UserManager.RemoveFromRoleAsync(user, role);
+        }
     }
 
     private static IEnumerable<Product> CreateProducts(

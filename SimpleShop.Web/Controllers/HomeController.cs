@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class HomeController : Controller
 {

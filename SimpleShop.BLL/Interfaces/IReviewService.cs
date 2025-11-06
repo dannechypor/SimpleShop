@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Model.DTO;
-using Shop.BLL.Infrastructure;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
 
-namespace Shop.BLL.Interfaces;
+namespace SimpleShop.BLL.Interfaces;
 
 public interface IReviewService
 {

@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Model.DTO;
-using Model.Entities;
-using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;
 

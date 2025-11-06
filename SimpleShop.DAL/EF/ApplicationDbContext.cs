@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Model.Entities;
-using Model.Entities.Enums;
 using SimpleShop.Model.Entities;
+using SimpleShop.Model.Entities.Enums;
 
 namespace SimpleShop.DAL.EF;
 

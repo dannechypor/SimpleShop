@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Model.DTO;
-using Model.Entities;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class AccountController(SignInManager<ApplicationUser> authenticationManager, IUserService userService)
     : Controller

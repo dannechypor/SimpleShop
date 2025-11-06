@@ -2,15 +2,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Model.DTO;
-using Model.Models;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class CatalogController(
     ICatalogService catalogService,

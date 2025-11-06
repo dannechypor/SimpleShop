@@ -1,4 +1,4 @@
-﻿namespace Shop.BLL.Infrastructure;
+﻿namespace SimpleShop.BLL.Infrastructure;
 
 public class OperationDetails
 {

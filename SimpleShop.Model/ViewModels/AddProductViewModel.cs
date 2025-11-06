@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SimpleShop.Model.Entities;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class AddProductViewModel
 {

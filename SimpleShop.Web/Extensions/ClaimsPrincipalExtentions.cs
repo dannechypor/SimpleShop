@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace ForGoodTime.Extensions;
+namespace SimpleShop.Web.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {

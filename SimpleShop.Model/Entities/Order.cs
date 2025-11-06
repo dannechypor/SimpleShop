@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Model.Entities;
-using Model.Entities.Enums;
+using SimpleShop.Model.Entities.Enums;
 
 namespace SimpleShop.Model.Entities;
 

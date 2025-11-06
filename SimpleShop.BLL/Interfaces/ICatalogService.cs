@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Model.DTO;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Interfaces;
+namespace SimpleShop.BLL.Interfaces;
 
 public interface ICatalogService
 {

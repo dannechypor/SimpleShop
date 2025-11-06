@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class ReviewViewModel
 {

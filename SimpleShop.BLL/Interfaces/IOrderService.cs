@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Model.DTO;
-using Model.Entities.Enums;
-using Shop.BLL.Infrastructure;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.Entities.Enums;
 
-namespace Shop.BLL.Interfaces;
+namespace SimpleShop.BLL.Interfaces;
 
 public interface IOrderService
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Model.Entities;
-using Model.ViewModels;
+using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
 namespace SimpleShop.Web.Controllers;
 

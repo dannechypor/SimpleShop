@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class PageViewModel
 {

@@ -2,7 +2,7 @@
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Components;
+namespace SimpleShop.Web.Components;
 
 public class CategorySummary(ICategoryService categoryService) : ViewComponent
 {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Model.DTO;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;

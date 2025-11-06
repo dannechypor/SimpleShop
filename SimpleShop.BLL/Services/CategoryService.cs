@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Shop.BLL.Infrastructure;
+using SimpleShop.BLL.Infrastructure;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Services;
+namespace SimpleShop.BLL.Services;
 
 public class CategoryService(IUnitOfWork db, ILogger<CategoryService> logger, IMemoryCache cache) : ICategoryService
 {

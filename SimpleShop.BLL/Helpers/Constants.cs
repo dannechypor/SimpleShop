@@ -1,4 +1,4 @@
-﻿namespace Shop.BLL.Helpers;
+﻿namespace SimpleShop.BLL.Helpers;
 
 public static class Constants
 {

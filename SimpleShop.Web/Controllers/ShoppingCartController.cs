@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.DAL.Interfaces;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary;
 
 namespace SimpleShop.Web.Controllers;

@@ -1,4 +1,4 @@
-﻿namespace Model.ViewModels;
+﻿namespace SimpleShop.Model.ViewModels;
 
 public class CountViewModel
 {
