@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Model.Entities;
 using Shop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
 namespace SimpleShop.DAL.DbInitialze;
 

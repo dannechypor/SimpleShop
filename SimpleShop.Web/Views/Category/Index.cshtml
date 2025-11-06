@@ -1,6 +1,6 @@
 ﻿@using Model.Models
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.CategoryListViewModel
+@model SimpleShop.Model.ViewModels.CategoryListViewModel
 @{
     ViewData["Title"] = "Categories";
 }
@@ -16,11 +16,11 @@
                         @foreach (var item in Model.Categories)
                         {
                             <tr>
-                                <td>@item.CategoryId</td>
+                                <td>@item.Id</td>
                                 <td>@item.Name</td>
                                 <td>#</td>
                                 <td>
-                                    <form asp-action="Delete" asp-route-id="@item.CategoryId" method="post">
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
                                         <button type="submit" class="btn btn-sm btn-danger">
                                             Delete
                                         </button>

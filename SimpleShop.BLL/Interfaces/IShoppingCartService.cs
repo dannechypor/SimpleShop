@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Model.Entities;
+using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Interfaces;
 

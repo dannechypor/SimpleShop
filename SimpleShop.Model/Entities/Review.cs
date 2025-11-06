@@ -1,10 +1,10 @@
 ﻿using System;
+using Model.Entities;
 
-namespace Model.Entities;
+namespace SimpleShop.Model.Entities;
 
-public sealed class Review
+public sealed class Review : BaseEntity
 {
-    public int Id { get; set; }
     public string Text { get; set; }
     public int Rating { get; set; }
     public DateTime Date { get; set; }

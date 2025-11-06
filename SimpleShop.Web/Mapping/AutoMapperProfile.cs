@@ -3,6 +3,7 @@ using Model.Entities;
 using Model.Models;
 using AutoMapper;
 using Model.ViewModels;
+using SimpleShop.Model.Entities;
 
 namespace ForGoodTime.Mapping;
 
@@ -25,7 +26,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<MyOrderInfoDto, MyOrderViewModel>();
 
-        CreateMap<WishListDto, WhishListItem>();
+        CreateMap<WishListDto, WishListItem>();
         CreateMap<WishListItemViewModel, WishListDto>();
 
         CreateMap<MyWishListDto, MyWishListViewModel>();

@@ -13,7 +13,7 @@
                                     <option value="">Chouse category</option>
                                     @foreach (var category in Model.Categories)
                                     {
-                                    <option value="@category.CategoryId">@category.Name</option>
+                                    <option value="@category.Id">@category.Name</option>
                                     }
                                 </select>
                                 <span asp-validation-for="Product.CategoryId"></span>

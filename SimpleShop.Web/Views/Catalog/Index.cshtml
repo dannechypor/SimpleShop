@@ -32,8 +32,8 @@
                                 @foreach (var item in Model.Categories)
                                 {
                                     <li>
-                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.CategoryId">@item.Name</a>
-                                        @if (item.CategoryId == Model.Product.CategoryId)
+                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.Id">@item.Name</a>
+                                        @if (item.Id == Model.Product.CategoryId)
                                         {
                                             @if (Model.IndexViewModel.Products != null)
                                             {
@@ -45,7 +45,7 @@
                                         {
                                             <span>(0)</span>
                                         }
-                                        @if (item.CategoryId == 0)
+                                        @if (item.Id == 0)
                                         {
 
                                         }

@@ -1,5 +1,6 @@
-﻿using Model.Entities;
+﻿using Shop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Interfaces;
+namespace SimpleShop.DAL.Interfaces;
 
 public interface ICategoryRepository : IRepository<Category>;

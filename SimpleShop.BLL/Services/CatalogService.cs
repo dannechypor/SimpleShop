@@ -5,30 +5,13 @@ using Model.DTO;
 using Model.Entities;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Services;
 
 public class CatalogService(IUnitOfWork db) : ICatalogService
 {
     private IUnitOfWork Database { get; } = db;
-
-    public List<Category> GetAllCategory()
-    {
-        var category = Database.CategoryRepository.GetAll().ToList();
-        return category;
-    }
-
-    public List<Product> GetAllProduct()
-    {
-        var product = Database.ProductRepository.GetAll().ToList();
-        return product;
-    }
-
-    public List<Manufacturer> GetAllManufacturer()
-    {
-        var manufacturer = Database.ManufacturerRepository.GetAll().ToList();
-        return manufacturer;
-    }
 
     public List<Product> GetProductByCategoryId(int id)
     {

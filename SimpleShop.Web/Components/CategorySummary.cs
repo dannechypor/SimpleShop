@@ -2,6 +2,7 @@
 using Model.Models;
 using Model.ViewModels;
 using Shop.BLL.Interfaces;
+using SimpleShop.Model.ViewModels;
 
 namespace ForGoodTime.Components;
 

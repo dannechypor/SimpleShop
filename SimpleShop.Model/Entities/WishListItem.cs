@@ -1,6 +1,8 @@
-﻿namespace Model.Entities;
+﻿using Model.Entities;
 
-public sealed class WhishListItem
+namespace SimpleShop.Model.Entities;
+
+public sealed class WishListItem
 {
     public int ProductId { get; set; }
     public Product Product { get; set; }

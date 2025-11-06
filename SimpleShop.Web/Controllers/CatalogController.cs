@@ -7,13 +7,16 @@ using Model.Models;
 using Model.ViewModels;
 using Shop.BLL.Interfaces;
 using Shop.DAL;
-using Shop.DAL.EF;
+using SimpleShop.DAL.EF;
+using SimpleShop.Model.Entities;
 
 namespace ForGoodTime.Controllers;
 
 public class CatalogController(
     ICatalogService catalogService,
     IReviewService reviewService,
+    ICategoryService categoryService,
+    IManufacturerService manufacturerService,
     ApplicationDbContext context,
     IMapper mapper)
     : Controller
@@ -25,8 +28,8 @@ public class CatalogController(
     public async Task<IActionResult> Index(int id, int? pr, string name, FilterModel model,
         SortState sortOrder = SortState.NameAsc, int page = 1)
     {
-        var category = CatalogService.GetAllCategory().ToList();
-        var manufacturers = CatalogService.GetAllManufacturer().ToList();
+        var category = categoryService.GetAllCategory().ToList();
+        var manufacturers = manufacturerService.GetAllManufacturer().ToList();
         var product = new ProductDto();
         IEnumerable<Product> Items = new List<Product>();
         const int pageSize = 6;

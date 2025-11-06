@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Model.Entities;
 
-namespace Model.Entities;
+namespace SimpleShop.Model.Entities;
 
-public sealed class Manufacturer
+public sealed class Manufacturer : BaseEntity
 {
     public int ManufacturerId { get; set; }
     public string Name { get; set; }

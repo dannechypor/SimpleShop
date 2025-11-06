@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Model.Entities;
+namespace SimpleShop.Model.Entities;
 
-public sealed class Product
+public sealed class Product : BaseEntity
 {
-    public int Id { get; set; }
     public string Name { get; set; }
     public string ShortDescription { get; set; }
     public string LongDescription { get; set; }

@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model.Entities;
 using Model.Entities.Enums;
+using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.EF;
+namespace SimpleShop.DAL.EF;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser>(options)
@@ -13,7 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Category> Categories { get; set; }
     public DbSet<Manufacturer> Manufacturers { get; set; }
     public DbSet<Review> Review { get; set; }
-    public DbSet<WhishListItem> WhishListItems { get; set; }
+    public DbSet<WishListItem> WishListItems { get; set; }
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -25,7 +26,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         base.OnModelCreating(modelBuilder);
 
         modelBuilder
-            .Entity<WhishListItem>()
+            .Entity<WishListItem>()
             .HasKey(x => new { x.ProductId, x.UserId });
         modelBuilder
             .Entity<Order>()

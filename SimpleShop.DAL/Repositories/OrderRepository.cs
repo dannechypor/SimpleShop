@@ -1,6 +1,7 @@
 ﻿using Model.Entities;
 using Shop.DAL.Interfaces;
-using Shop.DAL.EF;
+using SimpleShop.DAL.EF;
+using SimpleShop.Model.Entities;
 
 namespace Shop.DAL.Repositories;
 

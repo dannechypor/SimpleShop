@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Entities;
-using Shop.DAL.EF;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.DAL.EF;
+using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;
 

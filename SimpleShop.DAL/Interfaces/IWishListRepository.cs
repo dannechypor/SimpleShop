@@ -1,6 +1,6 @@
-﻿using Model.Entities;
+﻿using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Interfaces
+namespace SimpleShop.DAL.Interfaces
 {
-    public interface IWishListRepository : IRepository<WhishListItem>;
+    public interface IWishListRepository : IRepository<WishListItem>;
 }

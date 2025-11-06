@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Model.Entities;
+using SimpleShop.Model.Entities;
 
 namespace Model.ViewModels;
 

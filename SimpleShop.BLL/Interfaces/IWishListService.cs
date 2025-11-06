@@ -7,16 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Interfaces
 {
     public interface IWishListService
     {
-        Task AddToWhishList([FromForm]WishListDto wishListDto);
+        Task<OperationDetails> AddToWhishList([FromForm]WishListDto wishListDto);
         List<Product> GetAllProductIdByUser(string userId);
         int GetCountOfWishList(string? userId);
         Task<OperationDetails> DeleteRelationship(int productID, string userId);
-
-
     }
 }

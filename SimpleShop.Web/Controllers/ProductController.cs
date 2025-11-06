@@ -6,7 +6,10 @@ using Shop.BLL.Interfaces;
 
 namespace ForGoodTime.Controllers;
 
-public class ProductController(IProductService productService) : Controller
+public class ProductController(
+    IProductService productService,
+    ICategoryService categoryService,
+    IManufacturerService manufacturerService) : Controller
 {
     public IActionResult Index()
     {
@@ -19,8 +22,8 @@ public class ProductController(IProductService productService) : Controller
     {
         return View(new AddProductViewModel
         {
-            Categories = productService.GetAllCategory(),
-            Manufacturers = productService.GetAllManufacturer()
+            Categories = categoryService.GetAllCategory(),
+            Manufacturers = manufacturerService.GetAllManufacturer()
         });
     }
 

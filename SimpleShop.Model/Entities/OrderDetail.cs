@@ -1,8 +1,9 @@
-﻿namespace Model.Entities;
+﻿using Model.Entities;
 
-public sealed class OrderDetail
+namespace SimpleShop.Model.Entities;
+
+public sealed class OrderDetail : BaseEntity
 {
-    public int OrderDetailId { get; set; }
     public string Name { get; set; }
     public string Image { get; set; }
     public int Amount { get; set; }

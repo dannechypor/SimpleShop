@@ -12,6 +12,7 @@ using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Services;
 
@@ -23,14 +24,21 @@ public class OrderService(
 {
     public async Task CreateOrderAsync([FromForm] OrderDto orderDto)
     {
+        if (orderDto == null)
+            throw new ArgumentNullException(nameof(orderDto));
+
+        var shoppingCartItems = await shoppingCartService.GetShoppingCartItemsAsync();
+        if (shoppingCartItems == null || !shoppingCartItems.Any())
+            throw new InvalidOperationException("Cannot create order with empty shopping cart");
+
+        var cartTotal = (await shoppingCartService.GetCartCountAndTotalAmmountAsync()).TotalAmmount;
+        
         var order = mapper.Map<OrderDto, Order>(orderDto);
         order.OrderPlaced = DateTime.UtcNow;
         order.Status = OrderStatus.Processing;
+        order.OrderTotal = cartTotal;
         db.OrderRepository.Add(order);
 
-
-        var shoppingCartItems = await shoppingCartService.GetShoppingCartItemsAsync();
-        orderDto.OrderTotal = (await shoppingCartService.GetCartCountAndTotalAmmountAsync()).TotalAmmount;
         var orderDetail = shoppingCartItems.Select(e => new OrderDetail
         {
             Amount = e.Amount,
@@ -90,8 +98,8 @@ public class OrderService(
                     FirstName = e.FirstName,
                     LastName = e.LastName,
                     PhoneNumber = e.PhoneNumber,
-                    OrderPlaced = e.OrderPlaced
-                    //Status = e.Status
+                    OrderPlaced = e.OrderPlaced,
+                    Status = e.Status
                 },
                 ProductOrderInfos = e.OrderLines.Select(o => new ProductOrderInfoDto
                 {
@@ -108,11 +116,14 @@ public class OrderService(
 
     public async Task<OperationDetails> ChangeOrderStatus(int oederId, OrderStatus status)
     {
+        if (oederId == 0) return new OperationDetails(false, "Order ID cannot be 0", "");
+        
         var order = db.OrderRepository.GetById(oederId);
-        order.Status = status;
+        if (order == null) return new OperationDetails(false, "Order not found", "");
 
+        order.Status = status;
         db.OrderRepository.Update(order);
         await db.SaveAsync();
-        return new OperationDetails(true, "", "");
+        return new OperationDetails(true, "Order status updated successfully", "");
     }
 }

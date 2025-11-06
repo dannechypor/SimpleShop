@@ -1,4 +1,4 @@
-﻿namespace Model.Entities;
+﻿namespace SimpleShop.Model.Entities;
 
 public sealed class ShoppingCartItem
 {

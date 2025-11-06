@@ -6,6 +6,7 @@ using Model.Entities;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Services;
 
@@ -16,26 +17,36 @@ public class ProductService(IUnitOfWork db) : IProductService
         return db.ProductRepository.GetAll().ToList();
     }
 
-    public List<Category> GetAllCategory()
-    {
-        var category = db.CategoryRepository.GetAll().ToList();
-        return category;
-    }
-
-    public List<Manufacturer> GetAllManufacturer()
-    {
-        var manufacturers = db.ManufacturerRepository.GetAll().ToList();
-        return manufacturers;
-    }
-
     public async Task<OperationDetails> AddProduct(ProductDto productDto)
     {
+        if (productDto == null)
+            return new OperationDetails(false, "Product data is required", "");
+            
+        if (string.IsNullOrWhiteSpace(productDto.Name))
+            return new OperationDetails(false, "Product name is required", "");
+            
+        if (productDto.Price <= 0)
+            return new OperationDetails(false, "Product price must be greater than 0", "");
+            
+        if (productDto.CategoryId <= 0)
+            return new OperationDetails(false, "Valid category ID is required", "");
+            
+        if (productDto.ManufacturerId <= 0)
+            return new OperationDetails(false, "Valid manufacturer ID is required", "");
+
+        var category = db.CategoryRepository.GetById(productDto.CategoryId);
+        if (category == null)
+            return new OperationDetails(false, "Category not found", "");
+
+        var manufacturer = db.ManufacturerRepository.GetById(productDto.ManufacturerId);
+        if (manufacturer == null)
+            return new OperationDetails(false, "Manufacturer not found", "");
+
         db.ProductRepository.Add(new Product
         {
             Name = productDto.Name,
             LongDescription = productDto.LongDescription,
             ShortDescription = productDto.ShortDescription,
-
             Hight = productDto.Hight,
             Width = productDto.Width,
             Deepth = productDto.Deepth,
@@ -49,7 +60,7 @@ public class ProductService(IUnitOfWork db) : IProductService
             ManufacturerId = productDto.ManufacturerId
         });
         await db.SaveAsync();
-        return new OperationDetails(true, "Ok", "");
+        return new OperationDetails(true, "Product added successfully", "");
     }
 
     public IEnumerable<TopSellingDto> GetTopSellingProducts()
@@ -58,15 +69,66 @@ public class ProductService(IUnitOfWork db) : IProductService
         return top;
     }
 
+    public async Task<OperationDetails> UpdateProduct(ProductDto productDto)
+    {
+        if (productDto == null)
+            return new OperationDetails(false, "Product data is required", "");
+            
+        if (productDto.Id <= 0)
+            return new OperationDetails(false, "Valid product ID is required", "");
+            
+        if (string.IsNullOrWhiteSpace(productDto.Name))
+            return new OperationDetails(false, "Product name is required", "");
+            
+        if (productDto.Price <= 0)
+            return new OperationDetails(false, "Product price must be greater than 0", "");
+            
+        if (productDto.CategoryId <= 0)
+            return new OperationDetails(false, "Valid category ID is required", "");
+            
+        if (productDto.ManufacturerId <= 0)
+            return new OperationDetails(false, "Valid manufacturer ID is required", "");
+
+        var product = db.ProductRepository.GetById(productDto.Id);
+        if (product == null)
+            return new OperationDetails(false, "Product not found", "");
+
+        var category = db.CategoryRepository.GetById(productDto.CategoryId);
+        if (category == null)
+            return new OperationDetails(false, "Category not found", "");
+
+        var manufacturer = db.ManufacturerRepository.GetById(productDto.ManufacturerId);
+        if (manufacturer == null)
+            return new OperationDetails(false, "Manufacturer not found", "");
+
+        product.Name = productDto.Name;
+        product.LongDescription = productDto.LongDescription;
+        product.ShortDescription = productDto.ShortDescription;
+        product.Hight = productDto.Hight;
+        product.Width = productDto.Width;
+        product.Deepth = productDto.Deepth;
+        product.Price = productDto.Price;
+        product.ImageUrl_1 = productDto.ImageUrl_1;
+        product.ImageUrl_2 = productDto.ImageUrl_2;
+        product.ImageUrl_3 = productDto.ImageUrl_3;
+        product.CategoryId = productDto.CategoryId;
+        product.ManufacturerId = productDto.ManufacturerId;
+        product.InStock = productDto.InStock;
+
+        db.ProductRepository.Update(product);
+        await db.SaveAsync();
+        return new OperationDetails(true, "Product updated successfully", "");
+    }
+
     public async Task<OperationDetails> Delete(int id)
     {
         if (id == 0) return new OperationDetails(false, "Id field is '0'", "");
 
         var product = db.ProductRepository.GetById(id);
-        if (product == null) return new OperationDetails(false, "Not found", "");
+        if (product == null) return new OperationDetails(false, "Product not found", "");
 
         db.ProductRepository.Delete(product);
         await db.SaveAsync();
-        return new OperationDetails(true, "", "");
+        return new OperationDetails(true, "Product deleted successfully", "");
     }
 }

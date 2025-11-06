@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Model.Entities;
 using Model.Entities.Enums;
 
-namespace Model.Entities;
+namespace SimpleShop.Model.Entities;
 
-public sealed class Order
+public sealed class Order : BaseEntity
 {
     public int OrderId { get; set; }
     public string FirstName { get; set; }
@@ -15,6 +16,7 @@ public sealed class Order
     public DateTime OrderPlaced { get; set; }
     public OrderStatus Status { get; set; }
     public string Message { get; set; }
+    public decimal OrderTotal { get; set; }
 
     public string UserId { get; set; }
     public ApplicationUser User { get; set; }

@@ -1,5 +1,5 @@
-﻿using Model.Entities;
+﻿using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Interfaces;
+namespace SimpleShop.DAL.Interfaces;
 
 public interface IReviewRepository : IRepository<Review>;
