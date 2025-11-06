@@ -1,6 +1,6 @@
 # SimpleShop - E-Commerce Platform
 
-> **Note:** This project was originally created by me as my very first written project 6 years ago. I have recently updated it and added some improvements and fixes to modernize the codebase and enhance functionality.
+> **Note:** This project was originally created by me as my very first written project 6 years ago. I have recently upgraded it and added some improvements and fixes to modernize the codebase and enhance functionality.
 
 ## Overview
 
