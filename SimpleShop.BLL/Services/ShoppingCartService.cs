@@ -18,7 +18,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
     private const string CartCookieName = "CartId-cookie";
 
     public string Id { get; set; }
-    public IEnumerable<ShoppingCartItem>? ShoppingCartItems { get; set; }
+    public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
 
     /// <summary>
     /// Factory method to get a ShoppingCartService bound to the current HTTP context.
@@ -66,7 +66,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
     {
         EnsureCartId();
 
-        if (ShoppingCartItems != null)
+        if (ShoppingCartItems.Any())
             return ShoppingCartItems;
 
         ShoppingCartItems = await _context.ShoppingCartItems
@@ -89,7 +89,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
 
         await _context.SaveChangesAsync();
 
-        ShoppingCartItems = null;
+        ShoppingCartItems = new List<ShoppingCartItem>();
     }
 
     public async Task<(int ItemCount, decimal TotalAmmount)> GetCartCountAndTotalAmmountAsync()
@@ -146,7 +146,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
 
         await _context.SaveChangesAsync();
 
-        ShoppingCartItems = null;
+        ShoppingCartItems = new List<ShoppingCartItem>();
 
         return shoppingCartItem.Amount;
     }

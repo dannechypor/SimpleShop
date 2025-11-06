@@ -5,53 +5,79 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Model.DTO;
-using Model.Entities;
 using Model.Entities.Enums;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
-using Shop.DAL.Interfaces;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Services;
+namespace SimpleShop.BLL.Services;
 
 public class OrderService(
     IMapper mapper,
     IShoppingCartService shoppingCartService,
-    IUnitOfWork db)
+    IUnitOfWork db,
+    ApplicationDbContext context,
+    ILogger<OrderService> logger)
     : IOrderService
 {
     public async Task CreateOrderAsync([FromForm] OrderDto orderDto)
     {
         if (orderDto == null)
+        {
+            logger.LogError("CreateOrderAsync: orderDto is null");
             throw new ArgumentNullException(nameof(orderDto));
+        }
 
         var shoppingCartItems = await shoppingCartService.GetShoppingCartItemsAsync();
         if (shoppingCartItems == null || !shoppingCartItems.Any())
+        {
+            logger.LogWarning("CreateOrderAsync: Attempted to create order with empty shopping cart");
             throw new InvalidOperationException("Cannot create order with empty shopping cart");
+        }
 
         var cartTotal = (await shoppingCartService.GetCartCountAndTotalAmmountAsync()).TotalAmmount;
         
-        var order = mapper.Map<OrderDto, Order>(orderDto);
-        order.OrderPlaced = DateTime.UtcNow;
-        order.Status = OrderStatus.Processing;
-        order.OrderTotal = cartTotal;
-        db.OrderRepository.Add(order);
-
-        var orderDetail = shoppingCartItems.Select(e => new OrderDetail
+        // Use database transaction to ensure atomicity
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        try
         {
-            Amount = e.Amount,
-            ProductId = e.Product.Id,
-            Name = e.Product.Name,
-            Image = e.Product.ImageUrl_1,
-            OrderId = order.OrderId,
-            Price = e.Product.Price
-        });
+            var order = mapper.Map<OrderDto, Order>(orderDto);
+            order.OrderPlaced = DateTime.UtcNow;
+            order.Status = OrderStatus.Processing;
+            order.OrderTotal = cartTotal;
+            db.OrderRepository.Add(order);
 
-        db.OrderDetailRepository.AddRange(orderDetail);
-        await db.SaveAsync();
+            var orderDetail = shoppingCartItems.Select(e => new OrderDetail
+            {
+                Amount = e.Amount,
+                ProductId = e.Product.Id,
+                Name = e.Product.Name,
+                Image = e.Product.ImageUrl_1,
+                OrderId = order.OrderId,
+                Price = e.Product.Price
+            });
+
+            db.OrderDetailRepository.AddRange(orderDetail);
+            await db.SaveAsync();
+            
+            // Clear cart only after successful order creation
+            await shoppingCartService.ClearCartAsync();
+            
+            await transaction.CommitAsync();
+            logger.LogInformation("Order created successfully. OrderId: {OrderId}, Total: {Total}", 
+                order.OrderId, cartTotal);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            logger.LogError(ex, "Error creating order. UserId: {UserId}", orderDto.UserId);
+            throw;
+        }
     }
 
 
@@ -117,14 +143,32 @@ public class OrderService(
 
     public async Task<OperationDetails> ChangeOrderStatus(int oederId, OrderStatus status)
     {
-        if (oederId == 0) return new OperationDetails(false, "Order ID cannot be 0", "");
+        if (oederId == 0)
+        {
+            logger.LogWarning("ChangeOrderStatus: Order ID is 0");
+            return new OperationDetails(false, "Order ID cannot be 0", "");
+        }
         
         var order = db.OrderRepository.GetById(oederId);
-        if (order == null) return new OperationDetails(false, "Order not found", "");
+        if (order == null)
+        {
+            logger.LogWarning("ChangeOrderStatus: Order not found. OrderId: {OrderId}", oederId);
+            return new OperationDetails(false, "Order not found", "");
+        }
 
-        order.Status = status;
-        db.OrderRepository.Update(order);
-        await db.SaveAsync();
-        return new OperationDetails(true, "Order status updated successfully", "");
+        try
+        {
+            order.Status = status;
+            db.OrderRepository.Update(order);
+            await db.SaveAsync();
+            logger.LogInformation("Order status updated. OrderId: {OrderId}, NewStatus: {Status}", 
+                oederId, status);
+            return new OperationDetails(true, "Order status updated successfully", "");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating order status. OrderId: {OrderId}", oederId);
+            return new OperationDetails(false, "Error updating order status", "");
+        }
     }
 }

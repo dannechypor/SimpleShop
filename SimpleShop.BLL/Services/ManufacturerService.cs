@@ -1,19 +1,58 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Model.DTO;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;
 
-public class ManufacturerService(IUnitOfWork db) : IManufacturerService
+public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> logger, IMemoryCache cache) : IManufacturerService
 {
+    private const string CacheKey = "AllManufacturers";
+    private static readonly TimeSpan CacheExpiration = TimeSpan.FromMinutes(30);
+
     public List<Manufacturer> GetAllManufacturer()
     {
-        var manufacturer = db.ManufacturerRepository.GetAll().ToList();
-        return manufacturer;
+        if (!cache.TryGetValue(CacheKey, out List<Manufacturer> manufacturers))
+        {
+            manufacturers = db.ManufacturerRepository.GetAll().ToList();
+            cache.Set(CacheKey, manufacturers, CacheExpiration);
+            logger.LogDebug("Manufacturers loaded from database and cached");
+        }
+        else
+        {
+            logger.LogDebug("Manufacturers loaded from cache");
+        }
+        return manufacturers;
+    }
+
+    public PagedResultDto<Manufacturer> GetAllManufacturerPaged(int pageNumber = 1, int pageSize = 10)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var allManufacturers = GetAllManufacturer();
+        var totalCount = allManufacturers.Count;
+        var items = allManufacturers
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new PagedResultDto<Manufacturer>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 
     public async Task<OperationDetails> AddManufacturer(string Name)
@@ -26,6 +65,10 @@ public class ManufacturerService(IUnitOfWork db) : IManufacturerService
 
         db.ManufacturerRepository.Add(new Manufacturer { Name = Name });
         await db.SaveAsync();
+        
+        // Invalidate cache
+        cache.Remove(CacheKey);
+        logger.LogInformation("Manufacturer added successfully. Name: {Name}", Name);
         return new OperationDetails(true, "Manufacturer added successfully", "");
     }
 
@@ -46,6 +89,10 @@ public class ManufacturerService(IUnitOfWork db) : IManufacturerService
         manufacturer.Name = name;
         db.ManufacturerRepository.Update(manufacturer);
         await db.SaveAsync();
+        
+        // Invalidate cache
+        cache.Remove(CacheKey);
+        logger.LogInformation("Manufacturer updated successfully. Id: {Id}, Name: {Name}", id, name);
         return new OperationDetails(true, "Manufacturer updated successfully", "");
     }
 
@@ -58,6 +105,10 @@ public class ManufacturerService(IUnitOfWork db) : IManufacturerService
 
         db.ManufacturerRepository.Delete(manufacturer);
         await db.SaveAsync();
+        
+        // Invalidate cache
+        cache.Remove(CacheKey);
+        logger.LogInformation("Manufacturer deleted successfully. Id: {Id}, Name: {Name}", id, manufacturer.Name);
         return new OperationDetails(true, "Manufacturer deleted successfully", "");
     }
 }

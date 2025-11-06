@@ -34,5 +34,8 @@ public class AutoMapperProfile : Profile
 
         CreateMap<ReviewViewModel, OrderDto>();
         CreateMap<OrderDto, ReviewViewModel>();
+        
+        CreateMap<Review, ReviewDto>();
+        CreateMap<ReviewDto, Review>();
     }
 }

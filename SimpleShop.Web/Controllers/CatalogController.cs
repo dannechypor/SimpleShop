@@ -1,12 +1,14 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Model.DTO;
 using Model.Entities;
 using Model.Models;
 using Model.ViewModels;
 using Shop.BLL.Interfaces;
 using Shop.DAL;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.Model.Entities;
 
@@ -25,19 +27,50 @@ public class CatalogController(
     private IReviewService ReviewService { get; } = reviewService;
 
     [HttpGet]
-    public async Task<IActionResult> Index(int id, int? pr, string name, FilterModel model,
-        SortState sortOrder = SortState.NameAsc, int page = 1)
+    public async Task<IActionResult> Index(
+        int? categoryId,
+        int? manufacturerId,
+        string search,
+        decimal? minPrice,
+        decimal? maxPrice,
+        FilterModel model,
+        SortState sortOrder = SortState.NameAsc,
+        int page = 1,
+        int pageSize = 12)
     {
-        var category = categoryService.GetAllCategory().ToList();
+        var categories = categoryService.GetAllCategory().ToList();
         var manufacturers = manufacturerService.GetAllManufacturer().ToList();
         var product = new ProductDto();
-        IEnumerable<Product> Items = new List<Product>();
-        const int pageSize = 6;
+        
+        // Build base query with includes
+        var source = context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Manufacturer)
+            .AsQueryable();
 
-        var source = context.Products.Where(x => x.CategoryId == id);
-        if (pr != null && pr != 0) source = source.Where(p => p.Id == pr);
-        if (!string.IsNullOrEmpty(name)) source = source.Where(p => p.Name.Contains(name));
+        // Apply filters
+        if (categoryId.HasValue && categoryId.Value > 0)
+        {
+            source = source.Where(p => p.CategoryId == categoryId.Value);
+        }
+        if (manufacturerId.HasValue && manufacturerId.Value > 0)
+        {
+            source = source.Where(p => p.ManufacturerId == manufacturerId.Value);
+        }
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            source = source.Where(p => p.Name.Contains(search));
+        }
+        if (minPrice.HasValue)
+        {
+            source = source.Where(p => p.Price >= minPrice.Value);
+        }
+        if (maxPrice.HasValue)
+        {
+            source = source.Where(p => p.Price <= maxPrice.Value);
+        }
 
+        // Apply sorting
         source = sortOrder switch
         {
             SortState.NameDesc => source.OrderByDescending(s => s.Name),
@@ -46,26 +79,77 @@ public class CatalogController(
             _ => source.OrderBy(s => s.Name)
         };
 
-        product.CategoryId = id;
-        if (id == 0) source = context.Products;
+        // Get total count before pagination
         var count = source.Count();
-        var items = source.Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+        
+        // Apply pagination
+        var items = source
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
 
+        // Calculate product counts for categories and manufacturers
+        // For "All" count, we need to count all products without category/manufacturer filters
+        // but with other filters (search, price) applied
+        var baseFilteredQuery = context.Products.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            baseFilteredQuery = baseFilteredQuery.Where(p => p.Name.Contains(search));
+        }
+        if (minPrice.HasValue)
+        {
+            baseFilteredQuery = baseFilteredQuery.Where(p => p.Price >= minPrice.Value);
+        }
+        if (maxPrice.HasValue)
+        {
+            baseFilteredQuery = baseFilteredQuery.Where(p => p.Price <= maxPrice.Value);
+        }
+        // Count for "All Products" - without category/manufacturer filters
+        var allProductsFilteredCount = baseFilteredQuery.Count();
+        
+        var categoryCounts = categories.ToDictionary(
+            c => c.Id,
+            c => baseFilteredQuery.Count(p => p.CategoryId == c.Id)
+        );
+        
+        var manufacturerCounts = manufacturers.ToDictionary(
+            m => m.Id,
+            m => baseFilteredQuery.Count(p => p.ManufacturerId.HasValue && p.ManufacturerId.Value == m.Id)
+        );
+
+        product.CategoryId = categoryId ?? 0;
+        
+        // Get min and max prices for slider
+        var minPriceValue = context.Products.Min(p => (decimal?)p.Price) ?? 0;
+        var maxPriceValue = context.Products.Max(p => (decimal?)p.Price) ?? 1000;
+        
         var pageViewModel = new PageViewModel(count, page, pageSize);
         var viewModel = new IndexViewModel<Product>
         {
             SortViewModel = new SortViewModel(sortOrder),
-            FilterViewModel = new FilterViewModel(context.Products.ToList(), pr, name),
+            FilterViewModel = new FilterViewModel(context.Products.ToList(), manufacturerId, search),
             PageViewModel = pageViewModel,
             Products = items
         };
+        
         return View(new CatalogProductListViewModel
         {
             FilterModel = model,
             Product = product,
             IndexViewModel = viewModel,
-            Categories = category,
-            Manufacturers = manufacturers
+            Categories = categories,
+            Manufacturers = manufacturers,
+            CategoryCounts = categoryCounts,
+            ManufacturerCounts = manufacturerCounts,
+            CurrentCategoryId = categoryId,
+            CurrentManufacturerId = manufacturerId,
+            CurrentSearch = search,
+            CurrentMinPrice = minPrice,
+            CurrentMaxPrice = maxPrice,
+            CurrentSortOrder = sortOrder,
+            AllProductsCount = allProductsFilteredCount,
+            MinPriceValue = minPriceValue,
+            MaxPriceValue = maxPriceValue
         });
     }
 

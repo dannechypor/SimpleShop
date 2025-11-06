@@ -25,36 +25,37 @@
                 <div class="left_sidebar_area">
                     <aside class="left_widgets p_filter_widgets">
                         <div class="l_w_title">
-                            <h3>Categosry</h3>
+                            <h3>Category</h3>
                         </div>
                         <div class="widgets_inner">
                             <ul class="list">
+                                <li>
+                                    <a asp-controller="Catalog" 
+                                       asp-action="Index" 
+                                       asp-route-search="@Model.CurrentSearch"
+                                       asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                       asp-route-minPrice="@Model.CurrentMinPrice"
+                                       asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                       asp-route-sortOrder="@Model.CurrentSortOrder"
+                                       class="@(!Model.CurrentCategoryId.HasValue || Model.CurrentCategoryId.Value == 0 ? "active" : "")">All Products</a>
+                                    <span>(@Model.AllProductsCount)</span>
+                                </li>
                                 @foreach (var item in Model.Categories)
                                 {
+                                    var count = Model.CategoryCounts?.ContainsKey(item.Id) == true ? Model.CategoryCounts[item.Id] : 0;
                                     <li>
-                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.Id">@item.Name</a>
-                                        @if (item.Id == Model.Product.CategoryId)
-                                        {
-                                            @if (Model.IndexViewModel.Products != null)
-                                            {
-                                                <span>(@Model.IndexViewModel.PageViewModel.Count)</span>
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            <span>(0)</span>
-                                        }
-                                        @if (item.Id == 0)
-                                        {
-
-                                        }
+                                        <a asp-controller="Catalog" 
+                                           asp-action="Index" 
+                                           asp-route-categoryId="@item.Id"
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                           asp-route-sortOrder="@Model.CurrentSortOrder"
+                                           class="@(Model.CurrentCategoryId == item.Id ? "active" : "")">@item.Name</a>
+                                        <span>(@count)</span>
                                     </li>
                                 }
-                                <li>
-                                    <a asp-controller="Catalog" asp-action="Index" asp-route-Id="">All product</a>
-                                    <span>(@Model.IndexViewModel.PageViewModel.Count)</span>
-                                </li>
                             </ul>
                         </div>
                     </aside>
@@ -65,12 +66,31 @@
                         </div>
                         <div class="widgets_inner">
                             <ul class="list">
+                                <li>
+                                    <a asp-controller="Catalog" 
+                                       asp-action="Index" 
+                                       asp-route-categoryId="@Model.CurrentCategoryId"
+                                       asp-route-search="@Model.CurrentSearch"
+                                       asp-route-minPrice="@Model.CurrentMinPrice"
+                                       asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                       asp-route-sortOrder="@Model.CurrentSortOrder"
+                                       class="@(!Model.CurrentManufacturerId.HasValue || Model.CurrentManufacturerId.Value == 0 ? "active" : "")">All Manufacturers</a>
+                                    <span>(@Model.AllProductsCount)</span>
+                                </li>
                                 @foreach (var item in Model.Manufacturers)
                                 {
+                                    var count = Model.ManufacturerCounts?.ContainsKey(item.Id) == true ? Model.ManufacturerCounts[item.Id] : 0;
                                     <li>
-                                        <a asp-controller="Catalog" asp-action="Index" asp-route-Id="@item.ManufacturerId">@item.Name</a>
-
-                                        <span>(250)</span>
+                                        <a asp-controller="Catalog" 
+                                           asp-action="Index" 
+                                           asp-route-manufacturerId="@item.Id" 
+                                           asp-route-categoryId="@Model.CurrentCategoryId" 
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                           asp-route-sortOrder="@Model.CurrentSortOrder"
+                                           class="@(Model.CurrentManufacturerId == item.Id ? "active" : "")">@item.Name</a>
+                                        <span>(@count)</span>
                                     </li>
                                 }
                             </ul>
@@ -81,22 +101,28 @@
                         <div class="l_w_title">
                             <h3>Price Filter</h3>
                         </div>
-
                         <div class="widgets_inner">
-                            <div class="range_item">
-                                <!-- <div id="slider-range"></div> -->
-                                <input type="text" class="js-range-slider" value="" />
-                                <div class="d-flex">
-                                    <div class="price_text">
-                                        <p>Price :</p>
-                                    </div>
-                                    <div class="price_value d-flex justify-content-center">
-                                        <input type="text" class="js-input-from" id="amount" readonly />
-                                        <span>to</span>
-                                        <input type="text" class="js-input-to" id="amount" readonly />
+                            <form method="get" asp-controller="Catalog" asp-action="Index" id="priceFilterForm">
+                                <input type="hidden" name="categoryId" value="@Model.CurrentCategoryId" />
+                                <input type="hidden" name="manufacturerId" value="@Model.CurrentManufacturerId" />
+                                <input type="hidden" name="search" value="@Model.CurrentSearch" />
+                                <input type="hidden" name="sortOrder" value="@Model.CurrentSortOrder" />
+                                <input type="hidden" name="minPrice" id="minPriceInput" value="@(Model.CurrentMinPrice.HasValue ? Model.CurrentMinPrice.Value.ToString("F2") : Model.MinPriceValue.ToString("F2"))" />
+                                <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(Model.CurrentMaxPrice.HasValue ? Model.CurrentMaxPrice.Value.ToString("F2") : Model.MaxPriceValue.ToString("F2"))" />
+                                <div class="range_item">
+                                    <input type="text" class="js-range-slider" value="" />
+                                    <div class="d-flex">
+                                        <div class="price_text">
+                                            <p>Price :</p>
+                                        </div>
+                                        <div class="price_value d-flex justify-content-center">
+                                            <input type="text" class="js-input-from" id="amountFrom" readonly />
+                                            <span> - </span>
+                                            <input type="text" class="js-input-to" id="amountTo" readonly />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </aside>
                 </div>
@@ -111,27 +137,67 @@
 
 
                             <div class="single_product_menu d-flex">
-                                <h5>
-                                    Sort by :
-                                    <span>
-                                        <a asp-action="Index" asp-route-sortOrder="@(Model.IndexViewModel.SortViewModel.PriceSort)"
-                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
-                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)">По зростанню/спаданню ціни</a>
-                                    </span>
-                                </h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Sort by: @(Model.CurrentSortOrder == SortState.NameAsc ? "Name (A-Z)" : 
+                                                  Model.CurrentSortOrder == SortState.NameDesc ? "Name (Z-A)" :
+                                                  Model.CurrentSortOrder == SortState.PriceAsc ? "Price (Low to High)" :
+                                                  Model.CurrentSortOrder == SortState.PriceDesc ? "Price (High to Low)" : "Name (A-Z)")
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="sortDropdown">
+                                        <a class="dropdown-item" 
+                                           asp-action="Index" 
+                                           asp-route-sortOrder="@SortState.NameAsc"
+                                           asp-route-categoryId="@Model.CurrentCategoryId"
+                                           asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice">Name (A-Z)</a>
+                                        <a class="dropdown-item" 
+                                           asp-action="Index" 
+                                           asp-route-sortOrder="@SortState.NameDesc"
+                                           asp-route-categoryId="@Model.CurrentCategoryId"
+                                           asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice">Name (Z-A)</a>
+                                        <a class="dropdown-item" 
+                                           asp-action="Index" 
+                                           asp-route-sortOrder="@SortState.PriceAsc"
+                                           asp-route-categoryId="@Model.CurrentCategoryId"
+                                           asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice">Price (Low to High)</a>
+                                        <a class="dropdown-item" 
+                                           asp-action="Index" 
+                                           asp-route-sortOrder="@SortState.PriceDesc"
+                                           asp-route-categoryId="@Model.CurrentCategoryId"
+                                           asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                           asp-route-search="@Model.CurrentSearch"
+                                           asp-route-minPrice="@Model.CurrentMinPrice"
+                                           asp-route-maxPrice="@Model.CurrentMaxPrice">Price (High to Low)</a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="single_product_menu d-flex">
-                                <form method="get">
+                                <form method="get" asp-controller="Catalog" asp-action="Index">
+                                    <input type="hidden" name="categoryId" value="@Model.CurrentCategoryId" />
+                                    <input type="hidden" name="manufacturerId" value="@Model.CurrentManufacturerId" />
+                                    <input type="hidden" name="minPrice" value="@Model.CurrentMinPrice" />
+                                    <input type="hidden" name="maxPrice" value="@Model.CurrentMaxPrice" />
+                                    <input type="hidden" name="sortOrder" value="@Model.CurrentSortOrder" />
                                     <div class="input-group">
-                                        @Html.TextBox("name", Model.IndexViewModel.FilterViewModel.SelectedName, htmlAttributes: new { @class = "form-control", @placeholder = "Пошук" })
-
-
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupPrepend">
+                                        <input type="text" 
+                                               name="search" 
+                                               class="form-control" 
+                                               placeholder="Search products..." 
+                                               value="@Model.CurrentSearch" />
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-outline-secondary" type="button">
                                                 <i class="ti-search"></i>
-                                            </span>
+                                            </button>
                                         </div>
-
                                     </div>
                                 </form>
                             </div>
@@ -140,21 +206,39 @@
                 </div>
                 <div class="row align-items-center latest_product_inner">
 
-                    @foreach (var item in Model.IndexViewModel.Products)
+                    @if (Model.IndexViewModel.Products != null && Model.IndexViewModel.Products.Any())
                     {
-                        <div class="col-lg-4 col-sm-6">
-                            <div class="single_product_item">
-                                <img src="@item.ImageUrl_1" alt="">
-                                <a asp-controller="Catalog" asp-action="Details" asp-route-Id="@item.Id">@item.Name</a>
-                                <div class="single_product_text">
-                                    <h3>@item.Price $</h3>
-
-                                    <a asp-action="AddToShoppingCartGet" asp-controller="ShoppingCart" asp-route-Id="@item.Id" class="add_cart">+ to cart</a>
-                                    @if (User.Identity.IsAuthenticated)
-                                     {
-                                        <a asp-action="AddToWishList" asp-controller="WishList" asp-route-Id="@item.Id">+ to WishList</a>
-                                     }
+                        @foreach (var item in Model.IndexViewModel.Products)
+                        {
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="single_product_item">
+                                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl_1))
+                                    {
+                                        <img src="@item.ImageUrl_1" alt="@item.Name" class="img-fluid" style="max-height: 200px; object-fit: cover; width: 100%;" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/product/no-image.png" alt="No image" class="img-fluid" style="max-height: 200px; object-fit: cover; width: 100%;" />
+                                    }
+                                    <a asp-controller="Catalog" asp-action="Details" asp-route-Id="@item.Id">@item.Name</a>
+                                    <div class="single_product_text">
+                                        <h3>@item.Price.ToString("C")</h3>
+                                        <a asp-action="AddToShoppingCartGet" asp-controller="ShoppingCart" asp-route-Id="@item.Id" class="add_cart">+ to cart</a>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <a asp-action="AddToWishList" asp-controller="WishList" asp-route-Id="@item.Id" class="ml-2">+ to WishList</a>
+                                        }
                                     </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <p>No products found matching your criteria.</p>
+                                <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary">Clear Filters</a>
                             </div>
                         </div>
                     }
@@ -164,25 +248,51 @@
                                 <ul class="pagination">
                                     @if (Model.IndexViewModel.PageViewModel.HasPreviousPage)
                                     {
-                                        <a asp-action="Index"
-                                           asp-route-page="@(Model.IndexViewModel.PageViewModel.Page - 1)"
-                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
-                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)"
-                                           asp-route-sortorder="@(Model.IndexViewModel.SortViewModel.Current)"
-                                           class="page-item page-link pagination align-items-center ">
-                                            Back
-                                        </a>
+                                        <li class="page-item">
+                                            <a asp-action="Index"
+                                               asp-route-page="@(Model.IndexViewModel.PageViewModel.Page - 1)"
+                                               asp-route-search="@Model.CurrentSearch"
+                                               asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                               asp-route-categoryId="@Model.CurrentCategoryId"
+                                               asp-route-minPrice="@Model.CurrentMinPrice"
+                                               asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                               asp-route-sortOrder="@Model.CurrentSortOrder"
+                                               class="page-link">
+                                                Previous
+                                            </a>
+                                        </li>
+                                    }
+                                    @for (int i = 1; i <= Model.IndexViewModel.PageViewModel.TotalPages; i++)
+                                    {
+                                        <li class="page-item @(i == Model.IndexViewModel.PageViewModel.Page ? "active" : "")">
+                                            <a asp-action="Index"
+                                               asp-route-page="@i"
+                                               asp-route-search="@Model.CurrentSearch"
+                                               asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                               asp-route-categoryId="@Model.CurrentCategoryId"
+                                               asp-route-minPrice="@Model.CurrentMinPrice"
+                                               asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                               asp-route-sortOrder="@Model.CurrentSortOrder"
+                                               class="page-link">
+                                                @i
+                                            </a>
+                                        </li>
                                     }
                                     @if (Model.IndexViewModel.PageViewModel.HasNextPage)
                                     {
-                                        <a asp-action="Index"
-                                           asp-route-page="@(Model.IndexViewModel.PageViewModel.Page + 1)"
-                                           asp-route-name="@(Model.IndexViewModel.FilterViewModel.SelectedName)"
-                                           asp-route-company="@(Model.IndexViewModel.FilterViewModel.SelectedProduct)"
-                                           asp-route-sortorder="@(Model.IndexViewModel.SortViewModel.Current)"
-                                           class="page-item page-link pagination align-items-center ">
-                                            Next
-                                        </a>
+                                        <li class="page-item">
+                                            <a asp-action="Index"
+                                               asp-route-page="@(Model.IndexViewModel.PageViewModel.Page + 1)"
+                                               asp-route-search="@Model.CurrentSearch"
+                                               asp-route-manufacturerId="@Model.CurrentManufacturerId"
+                                               asp-route-categoryId="@Model.CurrentCategoryId"
+                                               asp-route-minPrice="@Model.CurrentMinPrice"
+                                               asp-route-maxPrice="@Model.CurrentMaxPrice"
+                                               asp-route-sortOrder="@Model.CurrentSortOrder"
+                                               class="page-link">
+                                                Next
+                                            </a>
+                                        </li>
                                     }
                                 </ul>
                             </ul>
@@ -196,4 +306,119 @@
 </section>
 @await Component.InvokeAsync("TopSellingProductsSummary")
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Destroy existing slider if any
+            var $range = $(".js-range-slider");
+            if ($range.length && $range.data("ionRangeSlider")) {
+                $range.data("ionRangeSlider").destroy();
+            }
+            
+            var $inputFrom = $(".js-input-from"),
+                $inputTo = $(".js-input-to"),
+                $minPriceInput = $("#minPriceInput"),
+                $maxPriceInput = $("#maxPriceInput"),
+                $priceFilterForm = $("#priceFilterForm"),
+                min = parseFloat(@Model.MinPriceValue.ToString("F2")),
+                max = parseFloat(@Model.MaxPriceValue.ToString("F2")),
+                from = parseFloat($minPriceInput.val()) || min,
+                to = parseFloat($maxPriceInput.val()) || max;
+            
+            // Ensure from and to are within bounds
+            if (from < min) from = min;
+            if (from > max) from = max;
+            if (to < min) to = min;
+            if (to > max) to = max;
+            if (from > to) from = to;
+
+            $range.ionRangeSlider({
+                type: "double",
+                min: min,
+                max: max,
+                from: from,
+                to: to,
+                prefix: '$ ',
+                onStart: updateInputs,
+                onChange: updateInputs,
+                onFinish: function (data) {
+                    // Auto-submit form when slider is released
+                    var from = Math.round(data.from * 100) / 100;
+                    var to = Math.round(data.to * 100) / 100;
+                    $minPriceInput.val(from);
+                    $maxPriceInput.val(to);
+                    $priceFilterForm.submit();
+                },
+                step: 1,
+                prettify_enabled: true,
+                prettify_separator: ".",
+                values_separator: " - ",
+                force_edges: true
+            });
+
+            function updateInputs(data) {
+                var from = Math.round(data.from * 100) / 100;
+                var to = Math.round(data.to * 100) / 100;
+                
+                $inputFrom.prop("value", "$ " + from.toFixed(2));
+                $inputTo.prop("value", "$ " + to.toFixed(2));
+                
+                // Update hidden inputs for form submission
+                $minPriceInput.val(from);
+                $maxPriceInput.val(to);
+            }
+        });
+    </script>
+    
+    <style>
+        .list li a.active {
+            color: #ff6b6b !important;
+            font-weight: bold;
+            background-color: #fff5f5;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .list li a:hover {
+            color: #ff6b6b !important;
+            background-color: #fff5f5;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .list li {
+            margin-bottom: 5px;
+        }
+        
+        .price_value {
+            flex-wrap: wrap;
+            min-height: 30px;
+            align-items: center;
+        }
+        
+        .price_value input {
+            min-width: 80px;
+            text-align: center;
+            margin: 0 5px;
+        }
+        
+        .price_value span {
+            margin: 0 5px;
+        }
+        
+        .price_text {
+            margin-right: 10px;
+        }
+        
+        .range_item {
+            padding: 10px 0;
+        }
+        
+        .range_item .irs {
+            margin-bottom: 20px;
+        }
+    </style>
+}
 
