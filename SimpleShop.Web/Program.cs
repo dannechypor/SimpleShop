@@ -5,6 +5,7 @@ using Shop.BLL.Interfaces;
 using Shop.BLL.Services;
 using Shop.DAL;
 using Shop.DAL.DbInitialze;
+using Shop.DAL.EF;
 using Shop.DAL.Interfaces;
 using Shop.DAL.Repositories;
 
@@ -74,7 +75,7 @@ builder.Services.AddScoped<IShoppingCartService>(ShoppingCartService.GetCart);
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();         
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();         
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
-builder.Services.AddTransient<IManufacturerRepositroy, ManufacturerRepository>();
+builder.Services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
           
 

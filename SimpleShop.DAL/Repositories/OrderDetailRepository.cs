@@ -1,16 +1,7 @@
 ﻿using Model.Entities;
 using Shop.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Shop.DAL.EF;
 
-namespace Shop.DAL.Repositories
-{
-    public class OrderDetailRepository : Repository<OrderDetail> , IOrderDetailRepository
-    {
-        public OrderDetailRepository(ApplicationDbContext db) : base (db)
-        {
-                
-        }
-    }
-}
+namespace Shop.DAL.Repositories;
+
+public class OrderDetailRepository(ApplicationDbContext db) : Repository<OrderDetail>(db), IOrderDetailRepository;

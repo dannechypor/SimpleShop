@@ -14,6 +14,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Shop.DAL.EF;
 
 namespace Shop.BLL.Services
 {
@@ -42,7 +43,7 @@ namespace Shop.BLL.Services
 
             };
 
-            Database.WishListPrepository.Add(whishList);
+            Database.WishListRepository.Add(whishList);
             await Database.SaveAsync();
 
         }
@@ -51,7 +52,7 @@ namespace Shop.BLL.Services
         {
             var myWishLists = new List<Product>();
 
-            var products = Database.WishListPrepository.All().Where(e => e.UserId == userId).ToList();
+            var products = Database.WishListRepository.All().Where(e => e.UserId == userId).ToList();
             //.Include(e => e.ProductId)
             //.Select(e => new Product
             //{
@@ -77,7 +78,7 @@ namespace Shop.BLL.Services
                 return 0;
             }
 
-            var products = Database.WishListPrepository.All()
+            var products = Database.WishListRepository.All()
                 .Where(e => e.UserId == userId)
                  .Select(e => new Product
                  {

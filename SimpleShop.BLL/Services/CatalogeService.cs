@@ -36,7 +36,7 @@ namespace Shop.BLL.Services
 
         public List<Manufacturer> GetAllManufacturer()
         {
-            var manufacturer = Database.ManufacturerRepositroy.GetAll().ToList();
+            var manufacturer = Database.ManufacturerRepository.GetAll().ToList();
             return manufacturer;
         }
 

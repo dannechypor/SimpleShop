@@ -1,138 +1,88 @@
-﻿using Shop.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Shop.DAL.EF;
+using Shop.DAL.Interfaces;
 
-namespace Shop.DAL.Repositories
+namespace Shop.DAL.Repositories;
+
+public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    protected readonly ApplicationDbContext Context;
+    private readonly DbSet<TEntity> _dbSet;
+
+    protected Repository(ApplicationDbContext mainDbContext)
     {
-        protected readonly ApplicationDbContext context;
-        protected readonly DbSet<TEntity> dbSet;
+        Context = mainDbContext;
+        _dbSet = Context.Set<TEntity>();
+    }
 
-        public Repository(ApplicationDbContext mainDbContext)
+    public virtual IQueryable<TEntity> All(string includeProperties = "")
+    {
+        return includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            .Aggregate<string?, IQueryable<TEntity>>(_dbSet,
+                (current, includeProperty) => current.Include(includeProperty));
+    }
+
+    public virtual IEnumerable<TEntity> GetAll()
+    {
+        return _dbSet.ToList();
+    }
+
+    public virtual TEntity GetById(int id)
+    {
+        return _dbSet.Find(id);
+    }
+
+    public virtual IEnumerable<TEntity> Get(
+        Expression<Func<TEntity, bool>>? filter = null, 
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, 
+        string includeProperties = "")
+    {
+        IQueryable<TEntity> query = _dbSet;
+
+        if (filter != null) query = query.Where(filter);
+
+        query = includeProperties.Split([','], StringSplitOptions.RemoveEmptyEntries)
+            .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+
+        return orderBy != null ? orderBy(query).ToList() : query.ToList();
+    }
+
+    public virtual void Add(TEntity entity)
+    {
+        if (entity == null) throw new NotImplementedException();
+        _dbSet.Add(entity);
+    }
+
+    public virtual void AddRange(IEnumerable<TEntity> entity)
+    {
+        if (entity == null) throw new NotImplementedException();
+        _dbSet.AddRange(entity);
+    }
+
+    public virtual void Update(TEntity item)
+    {
+        try
         {
-            context = mainDbContext;
-            dbSet = context.Set<TEntity>();
+            _dbSet.Attach(item);
         }
-        public virtual IQueryable<TEntity> All(string includeProperties = "")
+        finally
         {
-            IQueryable<TEntity> query = dbSet;
-            foreach (var includeProperty in
-                includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-            return query;
+            _dbSet.Update(item);
         }
+    }
 
-        public virtual IEnumerable<TEntity> GetAll()
-        {
-            return dbSet.ToList();
-        }
+    public void Delete(TEntity item)
+    {
+        if (item == null) throw new NotImplementedException();
+        _dbSet.Remove(item);
+    }
 
-        public virtual TEntity GetById(int id)
-        {
-            return dbSet.Find(id);
-        }
-
-        public virtual List<TEntity> GetRangeById(List<TEntity> entities)
-        {
-            dbSet.Find(entities);
-            return entities;
-        }
-
-        public IQueryable<TEntity> GetQ(string includeProperties = "")
-        {
-            IQueryable<TEntity> query = dbSet;
-            foreach (var includeProperty in
-                includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-            return query;
-        }
-
-        public virtual IEnumerable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>,
-            IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
-        {
-            IQueryable<TEntity> query = dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
-            else
-            {
-                return query.ToList();
-            }
-        }
-
-        public virtual TEntity Add(TEntity entity)
-        {
-            if (entity == null)
-            {
-                throw new NotImplementedException();
-            }
-            dbSet.Add(entity);
-            return entity;
-
-        }
-
-        public virtual IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entity)
-        {
-            if (entity == null)
-            {
-                throw new NotImplementedException();
-            }
-            dbSet.AddRange(entity);
-            return entity;
-
-        }
-
-        public virtual void Update(TEntity item)
-        {
-            try
-            {
-                dbSet.Attach(item);
-            }
-            catch { }
-            finally
-            {
-                dbSet.Update(item);
-            }
-        }
-
-        public void Delete(TEntity item)
-        {
-            if (item == null)
-            {
-                throw new NotImplementedException();
-            }
-            dbSet.Remove(item);
-        }
-
-        public void SetStateModified(TEntity entity)
-        {
-            context.Entry<TEntity>(entity).State = EntityState.Modified;
-        }
+    public void SetStateModified(TEntity entity)
+    {
+        Context.Entry(entity).State = EntityState.Modified;
     }
 }

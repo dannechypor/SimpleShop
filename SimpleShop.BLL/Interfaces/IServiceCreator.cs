@@ -3,6 +3,7 @@ using Shop.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Shop.DAL.EF;
 
 namespace Shop.BLL.Interfaces
 {

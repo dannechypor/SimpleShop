@@ -1,89 +1,60 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Model.Entities;
 using Shop.DAL.Interfaces;
+using Shop.DAL.EF;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shop.DAL.Repositories
+namespace Shop.DAL.Repositories;
+
+public sealed class UnitOfWork(
+    ApplicationDbContext dbContext,
+    SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    ICategoryRepository categoryRepository,
+    IProductRepository productRepository,
+    IReviewRepository reviewRepository,
+    IManufacturerRepository manufacturerRepository,
+    IOrderRepository orderRepository,
+    IOrderDetailRepository orderDetailRepository,
+    IWishListRepository wishListRepository)
+    : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
-    {
+    private readonly ApplicationDbContext _dbContext = dbContext 
+        ?? throw new ArgumentNullException(nameof(dbContext));
 
-        private ApplicationDbContext Database;
-        public UserManager<ApplicationUser> UserManager { get; }
-        public RoleManager<IdentityRole> RoleManager { get; }
-        public SignInManager<ApplicationUser> SignInManager { get; }
+    public UserManager<ApplicationUser> UserManager { get; } =
+        userManager ?? throw new ArgumentNullException(nameof(userManager));
 
-        private ICategoryRepository categoryRepository;
-        private IProductRepository productRepository;
-        private IReviewRepository reviewRepository;
-        private IManufacturerRepositroy manufacturerRepositroy;
-        private IOrderRepository orderRepository;
-        private IOrderDetailRepository orderDetailRepository;
-        private IWishListPrepository wishListPrepository;
-        
-       
-            
-        public UnitOfWork(ApplicationDbContext db,SignInManager<ApplicationUser> signInManager,UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)                        
-        {
-            Database = db;
-            UserManager = userManager;
-            RoleManager = roleManager;
-            SignInManager = signInManager;                                    
-        }
+    public RoleManager<IdentityRole> RoleManager { get; } =
+        roleManager ?? throw new ArgumentNullException(nameof(roleManager));
 
+    public SignInManager<ApplicationUser> SignInManager { get; } =
+        signInManager ?? throw new ArgumentNullException(nameof(signInManager));
 
-        public IProductRepository ProductRepository =>
-            productRepository ?? (productRepository = new ProductRepository(Database));
+    public IProductRepository ProductRepository { get; } =
+        productRepository ?? throw new ArgumentNullException(nameof(productRepository));
 
-        public ICategoryRepository CategoryRepository =>
-            categoryRepository ?? (categoryRepository = new CategoryRepository(Database));
+    public ICategoryRepository CategoryRepository { get; } =
+        categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
 
-        public IReviewRepository ReviewRepository =>
-            reviewRepository ?? (reviewRepository = new ReviewRepository(Database));
+    public IReviewRepository ReviewRepository { get; } =
+        reviewRepository ?? throw new ArgumentNullException(nameof(reviewRepository));
 
-        public IManufacturerRepositroy ManufacturerRepositroy =>
-            manufacturerRepositroy ?? (manufacturerRepositroy = new ManufacturerRepository(Database));
+    public IManufacturerRepository ManufacturerRepository { get; } =
+        manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
 
-        public IOrderRepository OrderRepository =>
-            orderRepository ?? (orderRepository = new OrderRepository(Database));
+    public IOrderRepository OrderRepository { get; } =
+        orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
 
-        public IOrderDetailRepository OrderDetailRepository =>
-            orderDetailRepository ?? (orderDetailRepository = new OrderDetailRepository(Database));
+    public IOrderDetailRepository OrderDetailRepository { get; } =
+        orderDetailRepository ?? throw new ArgumentNullException(nameof(orderDetailRepository));
 
-        public IWishListPrepository WishListPrepository =>
-           wishListPrepository ?? (wishListPrepository = new WishListRepository(Database));
+    public IWishListRepository WishListRepository { get; } =
+        wishListRepository ?? throw new ArgumentNullException(nameof(wishListRepository));
 
-
-
-        public async Task SaveAsync()
-        {
-            await Database.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        private bool disposed = false;
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    UserManager.Dispose();
-                    RoleManager.Dispose();
-                    
-                }
-                this.disposed = true;
-            }
-        }
-    }
+    public Task<int> SaveAsync(CancellationToken cancellationToken = default)
+        => _dbContext.SaveChangesAsync(cancellationToken);
 }

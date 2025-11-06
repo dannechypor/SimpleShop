@@ -1,23 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Model.Entities;
+﻿using Model.Entities;
+using Shop.DAL.EF;
 using Shop.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+namespace Shop.DAL.Repositories;
 
-namespace Shop.DAL.Repositories
-{
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
-    {
-        public CategoryRepository(ApplicationDbContext db) : base(db)
-        {
-
-        }
-
-    }
-}
+public class CategoryRepository(ApplicationDbContext db) : Repository<Category>(db), ICategoryRepository;

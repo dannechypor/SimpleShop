@@ -6,6 +6,7 @@ using Model.Entities;
 using Model.Models;
 using Shop.BLL.Interfaces;
 using Shop.DAL;
+using Shop.DAL.EF;
 
 namespace ForGoodTime.Controllers;
 

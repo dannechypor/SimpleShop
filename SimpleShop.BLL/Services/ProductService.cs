@@ -34,7 +34,7 @@ namespace Shop.BLL.Services
 
         public List<Manufacturer> GetAllManufacturer()
         {
-            var manufacturers = Database.ManufacturerRepositroy.GetAll().ToList();
+            var manufacturers = Database.ManufacturerRepository.GetAll().ToList();
             return manufacturers;
         }
 
@@ -63,7 +63,7 @@ namespace Shop.BLL.Services
 
         public IEnumerable<TopSellingDTO> GetTopSellings()
         {
-            var top = Database.ProductRepository.GetTopSellings();
+            var top = Database.ProductRepository.GetTopSellingProducts();
             return top;
         }
 
