@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Model.Entities;
 using Shop.DAL.Interfaces;
-using Shop.DAL.EF;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SimpleShop.DAL.EF;
+using SimpleShop.DAL.Interfaces;
 
 namespace Shop.DAL.Repositories;
 

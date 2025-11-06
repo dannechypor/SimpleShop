@@ -1,9 +1,10 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Model.Entities;
-using System.Threading.Tasks;
+using Shop.DAL.Interfaces;
 
-namespace Shop.DAL.Interfaces;
+namespace SimpleShop.DAL.Interfaces;
 
 public interface IUnitOfWork
 {

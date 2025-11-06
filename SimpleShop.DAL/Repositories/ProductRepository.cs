@@ -5,6 +5,7 @@ using Model.DTO;
 using Model.Entities;
 using Shop.DAL.Interfaces;
 using SimpleShop.DAL.EF;
+using SimpleShop.DAL.Repositories;
 using SimpleShop.Model.Entities;
 
 namespace Shop.DAL.Repositories;

@@ -1,9 +1,7 @@
-﻿using Model.Entities;
-using Shop.DAL.Interfaces;
-using SimpleShop.DAL.EF;
+﻿using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Repositories;
+namespace SimpleShop.DAL.Repositories;
 
 public class ReviewRepository(ApplicationDbContext db) : Repository<Review>(db), IReviewRepository;

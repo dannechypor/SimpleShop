@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SimpleShop.DAL.EF;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Services;

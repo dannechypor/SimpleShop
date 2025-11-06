@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shop.DAL;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Shop.DAL.EF;
+using Shop.BLL.Interfaces;
+using SimpleShop.DAL.EF;
 
-namespace Shop.BLL.Interfaces
+namespace SimpleShop.BLL.Interfaces;
+
+public interface IServiceCreator
 {
-    public interface IServiceCreator
-    {
-        IUserService CreateUserService(DbContextOptions<ApplicationDbContext> options);
-    }
+    IUserService CreateUserService(DbContextOptions<ApplicationDbContext> options);
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Shop.DAL.EF;
-using Shop.DAL.Interfaces;
+using SimpleShop.DAL.EF;
+using SimpleShop.DAL.Interfaces;
 
-namespace Shop.DAL.Repositories;
+namespace SimpleShop.DAL.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {

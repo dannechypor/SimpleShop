@@ -4,9 +4,9 @@ using Model.DTO;
 using Model.Entities;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
-using Shop.DAL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 
-namespace Shop.BLL.Services;
+namespace SimpleShop.BLL.Services;
 
 public class UserService : IUserService
 {
@@ -28,8 +28,8 @@ public class UserService : IUserService
                 LastName = userDto.LastName, Address = userDto.Address, PhoneNumber = userDto.PhoneNumber
             };
             var result = await Database.UserManager.CreateAsync(user, userDto.Password);
-            if (result.Errors.Count() > 0)
-                return new OperationDetails(false, result.Errors.FirstOrDefault().ToString(), "");
+            if (result.Errors.Any())
+                return new OperationDetails(false, result.Errors.FirstOrDefault()?.ToString(), "");
 
             await Database.UserManager.AddToRoleAsync(user, userDto.Role);
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
-using Shop.DAL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;

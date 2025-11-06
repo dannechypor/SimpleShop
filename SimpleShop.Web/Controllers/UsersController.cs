@@ -5,6 +5,7 @@ using Model.Entities;
 using Model.Models;
 using Model.ViewModels;
 using Shop.DAL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 
 namespace ForGoodTime.Controllers;
 

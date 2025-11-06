@@ -5,6 +5,7 @@ using Model.DTO;
 using Model.Entities;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
 namespace Shop.BLL.Services;
