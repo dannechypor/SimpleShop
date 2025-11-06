@@ -1,66 +1,41 @@
-﻿using Model.DTO;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Model.Entities;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Shop.BLL.Services
+namespace Shop.BLL.Services;
+
+public class ManufacturerService(IUnitOfWork db) : IManufacturerService
 {
-   public class ManufacturerService : IManufacturerService
+    public List<Manufacturer> GetAllManufacturer()
     {
-        private readonly IUnitOfWork Database;
+        var manufacturer = db.ManufacturerRepository.GetAll().ToList();
+        return manufacturer;
+    }
+
+    public async Task<OperationDetails> AddManufacturer(string Name)
+    {
+        if (db.ManufacturerRepository.Get().Any(c => c.Name == Name))
+            return new OperationDetails(false, "The same category is already exist in database", "");
+
+        db.ManufacturerRepository.Add(new Manufacturer { Name = Name });
+        await db.SaveAsync();
+        return new OperationDetails(true, "Ok", "");
+    }
 
 
-        public ManufacturerService(IUnitOfWork db)
-        {
-            Database = db;
-        }
+    public async Task<OperationDetails> Delete(int id)
+    {
+        if (id == 0) return new OperationDetails(false, "Id field is '0'", "");
 
-        public List<Manufacturer> GetAllManufacturer()
-        {
-            var manufacturer = Database.ManufacturerRepository.GetAll().ToList();
-            return manufacturer;
-             
-        }
+        var manufacturer = db.ManufacturerRepository.GetById(id);
+        if (manufacturer == null) return new OperationDetails(false, "Not found", "");
 
-        public async Task<OperationDetails> AddManufacturer(string Name)
-        {
-            if (Database.ManufacturerRepository.Get().Any(c => c.Name == Name))
-            {
-                return new OperationDetails(false, "The same category is already exist in database", "");
-            }
-
-            Database.ManufacturerRepository.Add(new Manufacturer { Name = Name });
-            await Database.SaveAsync();
-            return new OperationDetails(true, "Ok", "");
-        }
-
-
-        public async Task<OperationDetails> Delete(int id)
-        {
-            if (id == 0)
-            {
-                return new OperationDetails(false, "Id field is '0'", "");
-            }
-            Manufacturer manufacturer = Database.ManufacturerRepository.GetById(id);
-            if (manufacturer == null)
-            {
-                return new OperationDetails(false, "Not found", "");
-            }
-
-            Database.ManufacturerRepository.Delete(manufacturer);
-            await Database.SaveAsync();
-            return new OperationDetails(true, "", "");
-        }
-
-        public void Dispose()
-        {
-            Database.Dispose();
-        }
+        db.ManufacturerRepository.Delete(manufacturer);
+        await db.SaveAsync();
+        return new OperationDetails(true, "", "");
     }
 }

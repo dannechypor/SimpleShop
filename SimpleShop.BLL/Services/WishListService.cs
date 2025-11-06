@@ -1,111 +1,73 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Entities;
-using Model.Models;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
-using Shop.DAL;
 using Shop.DAL.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Shop.DAL.EF;
 
-namespace Shop.BLL.Services
+namespace Shop.BLL.Services;
+
+public class WishListService(IUnitOfWork db, ApplicationDbContext context)
+    : IWishListService
 {
-    public class WishListService : IWishListService
+    public async Task AddToWhishList([FromForm] WishListDTO wishListDto)
     {
-        private readonly IUnitOfWork Database;
-        private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
-        public WishListService(IMapper mapper, IUnitOfWork db , ApplicationDbContext context)
-
+        var whishList = new WhishListItem
         {
-            _mapper = mapper;
-            Database = db;
-            _context = context;
+            ProductId = wishListDto.ProductId,
+            UserId = wishListDto.UserId
+        };
+
+        db.WishListRepository.Add(whishList);
+        await db.SaveAsync();
+    }
+
+    public List<Product> GetAllProductIdByUser(string userId)
+    {
+        var products = db.WishListRepository.All().Where(e => e.UserId == userId).ToList();
+        //.Include(e => e.ProductId)
+        //.Select(e => new Product
+        //{
+        //    Id = e.ProductId
+        //})
+        //.ToList();
+
+
+        return products.Select(item => db.ProductRepository.GetAll().Where(e => e.Id == item.ProductId))
+            .Select(tmp => tmp.First()).ToList();
+    }
+
+    public int GetCountOfWishList(string? userId)
+    {
+        if (userId == null)
+        {
+            return 0;
         }
 
-
-        public async Task AddToWhishList([FromForm]WishListDTO wishListDto)
-        {
-            var whishList = _mapper.Map<WishListDTO, WhishListItem>(wishListDto);
-
-            whishList = new WhishListItem
+        var products = db.WishListRepository.All()
+            .Where(e => e.UserId == userId)
+            .Select(e => new Product
             {
-                ProductId = wishListDto.ProductId,
-                UserId = wishListDto.UserId
+                Id = e.ProductId
+            }).ToList();
 
-            };
+        return (products.Count);
+    }
 
-            Database.WishListRepository.Add(whishList);
-            await Database.SaveAsync();
+    public async Task<OperationDetails> DeleteRelationship(int productId, string userId)
+    {
+        var product = context.WhishListItems.FirstOrDefault(p => p.ProductId == productId);
+        var supplier = context.WhishListItems.FirstOrDefault(s => s.UserId == userId);
+        
+        context.WhishListItems.Remove(supplier);
+        context.WhishListItems.Remove(product);
+        
+        await context.SaveChangesAsync();
 
-        }
-
-        public List<Product> GetAllProductIdByUser(string userId)
-        {
-            var myWishLists = new List<Product>();
-
-            var products = Database.WishListRepository.All().Where(e => e.UserId == userId).ToList();
-            //.Include(e => e.ProductId)
-            //.Select(e => new Product
-            //{
-            //    Id = e.ProductId
-            //})
-            //.ToList();
-
-
-            foreach (var item in products)
-            {
-                var tmp = Database.ProductRepository.GetAll().Where(e => e.Id == item.ProductId);
-                myWishLists.Add(tmp.First());
-            }
-
-
-            return myWishLists;
-        }
-
-        public int GetCountOfWishList(string? userId)
-        {
-            if (userId == null)
-            {
-                return 0;
-            }
-
-            var products = Database.WishListRepository.All()
-                .Where(e => e.UserId == userId)
-                 .Select(e => new Product
-                 {
-                     Id = e.ProductId
-                 }).ToList();
-
-            return (products.Count());
-        }
-
-        public async Task<OperationDetails> DeleteRelationship(int productID, string userId)
-        {
-            
-               
-                var product = _context.WhishListItems.FirstOrDefault(p => p.ProductId == productID);
-                var supplier = _context.WhishListItems.FirstOrDefault(s => s.UserId == userId);
-
-                
-                _context.WhishListItems.Remove(supplier);
-                _context.WhishListItems.Remove(product);
-
-              
-               await _context.SaveChangesAsync();
-
-            return new OperationDetails(true, "", "");
-
-        }
-
-
+        return new OperationDetails(true, "", "");
     }
 }

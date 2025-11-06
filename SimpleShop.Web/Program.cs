@@ -62,7 +62,7 @@ builder.Services.AddMvc();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IUserService, UserService>();          
 builder.Services.AddTransient<ICategoryService, CategoryService>();                     
-builder.Services.AddTransient<ICatalogService, CatalogeService>();                     
+builder.Services.AddTransient<ICatalogService, CatalogService>();                     
 builder.Services.AddTransient<IProductService, ProductService>();      
 builder.Services.AddTransient<IReviewService, ReviewService>();      
 builder.Services.AddTransient<IOrderService, OrderService>();      

@@ -8,7 +8,7 @@ public class TopSellingProductsSummary(IProductService productService) : ViewCom
 {
     public Task<IViewComponentResult> InvokeAsync()
     {
-        var top = productService.GetTopSellings();
+        var top = productService.GetTopSellingProducts();
 
         return Task.FromResult<IViewComponentResult>(View(new TopSellingViewModel
         {
