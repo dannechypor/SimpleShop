@@ -3,7 +3,16 @@
 
 <section class="checkout_area padding_top">
     <div class="container">
-
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <div class="alert alert-warning text-center" role="alert">
+                <h4>Please login to continue with checkout</h4>
+                <p>You need to be logged in to complete your order.</p>
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-primary">Login</a>
+            </div>
+        }
+        else
+        {
         @*<div class="cupon_area">
                 <div class="check_title">
                     <h2>
@@ -69,6 +78,7 @@
                 </form>
             </div>
         </div>
+        }
     </div>
 </section>
 

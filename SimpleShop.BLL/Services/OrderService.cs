@@ -41,8 +41,17 @@ public class OrderService(
 
         var cartTotal = (await shoppingCartService.GetCartCountAndTotalAmmountAsync()).TotalAmmount;
 
-        // Use database transaction to ensure atomicity
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        // Check if database provider supports transactions (In-Memory Database doesn't)
+        var isInMemory = context.Database.ProviderName?.Contains("InMemory") == true;
+        var canUseTransactions = !isInMemory;
+        
+        // Use database transaction to ensure atomicity (if supported)
+        Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = null;
+        if (canUseTransactions)
+        {
+            transaction = await context.Database.BeginTransactionAsync();
+        }
+        
         try
         {
             var order = mapper.Map<OrderDto, Order>(orderDto);
@@ -67,15 +76,29 @@ public class OrderService(
             // Clear cart only after successful order creation
             await shoppingCartService.ClearCartAsync();
 
-            await transaction.CommitAsync();
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
+            
             logger.LogInformation("Order created successfully. OrderId: {OrderId}, Total: {Total}",
                 order.OrderId, cartTotal);
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            if (transaction != null)
+            {
+                await transaction.RollbackAsync();
+            }
             logger.LogError(ex, "Error creating order. UserId: {UserId}", orderDto.UserId);
             throw;
+        }
+        finally
+        {
+            if (transaction != null)
+            {
+                await transaction.DisposeAsync();
+            }
         }
     }
 

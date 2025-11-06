@@ -30,7 +30,13 @@
                             Please Sign in now
                         </h3>
 
-                        <form method="post" class="row contact_form">
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="col-md-12 alert alert-warning" role="alert">
+                                <strong>@TempData["ErrorMessage"]</strong>
+                            </div>
+                        }
+                        <form method="post" class="row contact_form" asp-route-returnUrl="@ViewData["ReturnUrl"]">
                             <div class="col-md-12 text-danger" asp-validation-summary="All"></div>
                             <div class="col-md-12 form-group p_star">
                                 <input asp-for="Email" type="email" class="form-control" id="email" name="email"
