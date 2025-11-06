@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class EditUserViewModel
 {

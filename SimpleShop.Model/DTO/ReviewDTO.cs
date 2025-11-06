@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Model.DTO;
+namespace SimpleShop.Model.DTO;
 
 public class ReviewDto
 {

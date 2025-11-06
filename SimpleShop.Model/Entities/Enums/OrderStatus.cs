@@ -1,4 +1,4 @@
-﻿namespace Model.Entities.Enums;
+﻿namespace SimpleShop.Model.Entities.Enums;
 
 public enum OrderStatus
 {

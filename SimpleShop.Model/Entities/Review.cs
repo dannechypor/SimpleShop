@@ -1,5 +1,4 @@
 ﻿using System;
-using Model.Entities;
 
 namespace SimpleShop.Model.Entities;
 

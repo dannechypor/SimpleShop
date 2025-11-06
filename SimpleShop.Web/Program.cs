@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Model.Entities;
-using Shop.BLL.Interfaces;
-using Shop.BLL.Services;
-using Shop.DAL.Interfaces;
-using Shop.DAL.Repositories;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.BLL.Services;
 using SimpleShop.DAL.DbInitialze;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.DAL.Repositories;
+using SimpleShop.Model.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +72,7 @@ builder.Services.AddTransient<IReviewService, ReviewService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IManufacturerService, ManufacturerService>();
 builder.Services.AddTransient<IWishListService, WishListService>();
-builder.Services.AddScoped<IShoppingCartService>(ShoppingCartService.GetCart);
+builder.Services.AddTransient<IShoppingCartService>(ShoppingCartService.GetCart);
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 

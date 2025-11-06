@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model.Models;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class ManufacturerController(IManufacturerService manufacturerService) : Controller
 {

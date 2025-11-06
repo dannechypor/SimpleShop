@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-
-@{
+﻿@{
     ViewData["Title"] = "Contact";
 }
 
@@ -11,38 +9,39 @@
         <div class="d-none d-sm-block mb-5 pb-4">
             <div id="map" style="height: 480px;"></div>
             <script>function initMap() {
-            var uluru = {
-              lat: -25.363,
-              lng: 131.044
-            };
-            var grayStyles = [{
-                featureType: "all",
-                stylers: [{
-                    saturation: -90
-                  },
-                  {
-                    lightness: 50
-                  }
-                ]
-              },
-              {
-                elementType: 'labels.text.fill',
-                stylers: [{
-                  color: '#ccdee9'
-                }]
-              }
-            ];
-            var map = new google.maps.Map(document.getElementById('map'), {
-              center: {
-                lat: -31.197,
-                lng: 150.744
-              },
-              zoom: 9,
-              styles: grayStyles,
-              scrollwheel: false
-            });
-          }</script>
-            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpfS1oRGreGSBU5HHjMmQ3o5NLw7VdJ6I&callback=initMap"></script>
+                    var uluru = {
+                        lat: -25.363,
+                        lng: 131.044
+                    };
+                    var grayStyles = [{
+                        featureType: "all",
+                        stylers: [{
+                            saturation: -90
+                        },
+                            {
+                                lightness: 50
+                            }
+                        ]
+                    },
+                        {
+                            elementType: 'labels.text.fill',
+                            stylers: [{
+                                color: '#ccdee9'
+                            }]
+                        }
+                    ];
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        center: {
+                            lat: -31.197,
+                            lng: 150.744
+                        },
+                        zoom: 9,
+                        styles: grayStyles,
+                        scrollwheel: false
+                    });
+                }</script>
+            <script
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpfS1oRGreGSBU5HHjMmQ3o5NLw7VdJ6I&callback=initMap"></script>
         </div>
         <div class="row">
             <div class="col-12">
@@ -55,14 +54,17 @@
 
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input class="form-control" name="name" id="name" type="text" onfocus="this.placeholder = ''"
-                                       onblur="this.placeholder = 'Enter your name'" placeholder= "Enter Name ">
+                                <input class="form-control" name="name" id="name" type="text"
+                                       onfocus="this.placeholder = ''"
+                                       onblur="this.placeholder = 'Enter your name'" placeholder="Enter Name ">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input class="form-control" name="email" id="email" type="email" onfocus="this.placeholder = ''"
-                                       onblur="this.placeholder = 'Enter email address'" placeholder='Enter email again'>
+                                <input class="form-control" name="email" id="email" type="email"
+                                       onfocus="this.placeholder = ''"
+                                       onblur="this.placeholder = 'Enter email address'"
+                                       placeholder="Enter email again">
                             </div>
                         </div>
 
@@ -71,7 +73,7 @@
 
                                 <textarea class="form-control w-100" name="message" id="message" cols="30" rows="9"
                                           onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'"
-                                          placeholder='Enter Message'></textarea>
+                                          placeholder="Enter Message"></textarea>
                             </div>
                         </div>
 
@@ -95,8 +97,8 @@
                 <div class="media contact-info">
                     <span class="contact-info__icon"><i class="ti-tablet"></i></span>
                     <div class="media-body">
-                        <h3>+380936581050</h3>
-                        <h3>+380936581050</h3>
+                        <h3>+000000000000</h3>
+                        <h3>+000000000000</h3>
                         <p>Mon to Fri 9am to 6pm</p>
                     </div>
                 </div>

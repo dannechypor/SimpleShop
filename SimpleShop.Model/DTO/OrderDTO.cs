@@ -1,7 +1,7 @@
 ﻿using System;
-using Model.Entities.Enums;
+using SimpleShop.Model.Entities.Enums;
 
-namespace Model.DTO;
+namespace SimpleShop.Model.DTO;
 
 public class OrderDto
 {

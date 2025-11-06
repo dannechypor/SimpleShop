@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Model.DTO;
-using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
+using Microsoft.Extensions.Logging;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;
 
-public class ReviewService(IUnitOfWork db) : IReviewService
+public class ReviewService(IUnitOfWork db, IMapper mapper, ILogger<ReviewService> logger) : IReviewService
 {
     public async Task<OperationDetails> Create(ReviewDto reviewDto, string userId)
     {
@@ -52,23 +54,44 @@ public class ReviewService(IUnitOfWork db) : IReviewService
     public List<ReviewDto> GetReviewsByProductId(int productId)
     {
         if (productId <= 0)
+        {
+            logger.LogWarning("GetReviewsByProductId: Invalid product ID. ProductId: {ProductId}", productId);
             return new List<ReviewDto>();
+        }
 
-        return db.ReviewRepository.All()
-            .Where(r => r.ProductId == productId)
-            .Include(r => r.User)
-            .OrderByDescending(r => r.Date)
-            .Select(r => new ReviewDto
+        try
+        {
+            var reviews = db.ReviewRepository.All()
+                .Where(r => r.ProductId == productId)
+                .Include(r => r.User)
+                .OrderByDescending(r => r.Date)
+                .ToList();
+
+            // Use AutoMapper for mapping
+            var reviewDtos = mapper.Map<List<Review>, List<ReviewDto>>(reviews);
+            
+            // Set UserName manually since it's not in the entity
+            for (int i = 0; i < reviews.Count; i++)
             {
-                Id = r.Id,
-                Text = r.Text,
-                Rating = r.Rating,
-                Date = r.Date,
-                ProductId = r.ProductId,
-                UserId = r.UserId,
-                UserName = r.User != null ? $"{r.User.FirstName} {r.User.LastName}" : "Anonymous"
-            })
-            .ToList();
+                if (reviews[i].User != null)
+                {
+                    reviewDtos[i].UserName = $"{reviews[i].User.FirstName} {reviews[i].User.LastName}";
+                }
+                else
+                {
+                    reviewDtos[i].UserName = "Anonymous";
+                }
+            }
+
+            logger.LogDebug("GetReviewsByProductId: Retrieved {Count} reviews for ProductId: {ProductId}", 
+                reviewDtos.Count, productId);
+            return reviewDtos;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving reviews. ProductId: {ProductId}", productId);
+            return new List<ReviewDto>();
+        }
     }
 
     public double GetAverageRatingByProductId(int productId)

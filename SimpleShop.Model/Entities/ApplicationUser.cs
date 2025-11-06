@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using SimpleShop.Model.Entities;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
-namespace Model.Entities;
+namespace SimpleShop.Model.Entities;
 
 public sealed class ApplicationUser : IdentityUser
 {

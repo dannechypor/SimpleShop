@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Model.DTO;
+namespace SimpleShop.Model.DTO;
 
 public class MyOrderInfoDto
 {

@@ -1,4 +1,4 @@
-﻿namespace Model.DTO;
+﻿namespace SimpleShop.Model.DTO;
 
 public class TopSellingDto
 {

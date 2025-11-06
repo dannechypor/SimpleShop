@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model.DTO;
-using Model.Models;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
+using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class ProductController(
     IProductService productService,

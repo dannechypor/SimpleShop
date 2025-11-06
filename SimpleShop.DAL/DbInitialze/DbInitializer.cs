@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Model.Entities;
-using Shop.DAL.Interfaces;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.Entities;
 
@@ -14,330 +12,255 @@ public static class DbInitializer
 {
     public static async Task Seed(IUnitOfWork db)
     {
-        // ---------- Identity data ----------
-        var roles = new[] { "Admin", "User" };
+        await EnsureRoleAsync(db, "Admin");
+        await EnsureRoleAsync(db, "User");
 
-        foreach (var role in roles)
-        {
-            if (!await db.RoleManager.RoleExistsAsync(role))
-            {
-                await db.RoleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
-
-        async Task<ApplicationUser> EnsureUserAsync(
-            string email,
-            string password,
-            string firstName,
-            string lastName,
-            string address,
-            string phone)
-        {
-            var user = await db.UserManager.FindByEmailAsync(email);
-            if (user != null)
-            {
-                return user;
-            }
-
-            user = new ApplicationUser
-            {
-                Email = email,
-                UserName = email,
-                FirstName = firstName,
-                LastName = lastName,
-                Address = address,
-                PhoneNumber = phone
-            };
-
-            var createResult = await db.UserManager.CreateAsync(user, password);
-            if (!createResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"Failed to create seed user {email}: " +
-                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
-            }
-
-            return user;
-        }
-
-        var adminUser = await EnsureUserAsync(
-            email: "admin@simpleshop.local",
+        var adminUser = await CreateUserIfNotExistsAsync(
+            db,
+            email: "admin@shop.local",
             password: "Admin_12345",
-            firstName: "Alex",
-            lastName: "Admin",
+            firstName: "Admin",
+            lastName: "User",
             address: "Main Street 1, Demo City",
-            phone: "+10000000001");
+            phoneNumber: "+10000000001");
 
-        var regularUser = await EnsureUserAsync(
-            email: "customer@simpleshop.local",
-            password: "User_12345",
-            firstName: "Jamie",
-            lastName: "Customer",
-            address: "Oak Avenue 5, Demo City",
-            phone: "+10000000002");
+        var customerUser = await CreateUserIfNotExistsAsync(
+            db,
+            email: "customer@shop.local",
+            password: "Customer_12345",
+            firstName: "Customer",
+            lastName: "Demo",
+            address: "Customer Avenue 5, Demo City",
+            phoneNumber: "+10000000002");
 
-        if (!await db.UserManager.IsInRoleAsync(adminUser, "Admin"))
+        await EnsureUserInRoleAsync(db, adminUser, "Admin");
+        await EnsureUserNotInRoleAsync(db, adminUser, "User");
+
+        await EnsureUserInRoleAsync(db, customerUser, "User");
+        await EnsureUserNotInRoleAsync(db, customerUser, "Admin");
+
+        if (db.ProductRepository.GetAll().Any() ||
+            db.CategoryRepository.GetAll().Any() ||
+            db.ManufacturerRepository.GetAll().Any())
         {
-            await db.UserManager.AddToRoleAsync(adminUser, "Admin");
-        }
-
-        if (!await db.UserManager.IsInRoleAsync(regularUser, "User"))
-        {
-            await db.UserManager.AddToRoleAsync(regularUser, "User");
-        }
-
-        // ---------- Catalog data ----------
-        if (db.CategoryRepository.GetAll().Any() ||
-            db.ManufacturerRepository.GetAll().Any() ||
-            db.ProductRepository.GetAll().Any())
-        {
-            // Already seeded
             return;
         }
 
-        // Shared descriptions (no duplication per product)
-        const string defaultLongDescription =
-            "Clean, modern furniture built from solid materials and durable fabrics. " +
-            "Every piece is designed for everyday use in contemporary homes with " +
-            "soft-close hardware, rounded edges and easy-to-clean finishes.";
-
-        const string defaultShortDescription =
-            "Modern, durable furniture ideal for contemporary living and dining spaces.";
-
-        var now = DateTime.UtcNow;
-
-        // Image URLs – free stock photos from Unsplash (furniture, interiors)
-        // Cabinets / wardrobes
-        const string cabinetImage1 = "https://unsplash.com/photos/a-room-filled-with-lots-of-white-cabinets-OosDQ87hK6I";
-        const string cabinetImage2 = "https://unsplash.com/photos/a-room-with-a-wooden-floor-and-white-closets-YbcX1Sbn5Qk";
-        const string cabinetImage3 = "https://unsplash.com/photos/modern-bedroom-with-a-sleek-wardrobe-design-JnAqOVTHx7w";
-
-        // Tables
-        const string tableImage1 = "https://unsplash.com/photos/modern-dining-table-with-upholstered-chairs-PXfUGQXaHNQ";
-        const string tableImage2 = "https://unsplash.com/photos/dining-table-with-chairs-and-a-plant-G1ZMhQZDHOQ";
-        const string tableImage3 = "https://unsplash.com/photos/dining-table-with-six-upholstered-chairs-in-a-bright-room-SrbklO9p8gI";
-
-        // Sofas
-        const string sofaImage1 = "https://unsplash.com/photos/a-living-room-with-a-couch-and-a-table-4Q9aOJF-6vI";
-        const string sofaImage2 = "https://unsplash.com/photos/living-room-with-brown-sofa-and-glass-window-4_jQL4JCS98";
-        const string sofaImage3 = "https://unsplash.com/photos/a-living-room-with-a-large-green-couch-VZ2z8ozzy10";
-
-        // Chairs
-        const string chairImage1 = "https://unsplash.com/photos/brown-wooden-chairs-v4sxFK-6k8U";
-        const string chairImage2 = "https://unsplash.com/photos/a-wooden-chair-sitting-on-top-of-a-wooden-floor-RCWIK0fsETc";
-        const string chairImage3 = "https://unsplash.com/photos/white-and-brown-wooden-chair-qdq8eDgRelA";
-
-        // Categories
-        var categories = new[]
+        var categories = new List<Category>
         {
-            new Category { Name = "Cabinets & Storage" },   // 0
-            new Category { Name = "Tables" },               // 1
-            new Category { Name = "Sofas" },                // 2
-            new Category { Name = "Chairs" }                // 3
+            new() { Name = "Cabinets" },
+            new() { Name = "Tables" },
+            new() { Name = "Sofas" },
+            new() { Name = "Chairs" }
         };
-
         db.CategoryRepository.AddRange(categories);
 
-        // Manufacturers
-        var manufacturers = new[]
+        var manufacturers = new List<Manufacturer>
         {
-            new Manufacturer { Name = "Nordic Home" },      // 0
-            new Manufacturer { Name = "Urban Loft Studio" },// 1
-            new Manufacturer { Name = "ComfortLine" },      // 2
-            new Manufacturer { Name = "Oak & Steel" }       // 3
+            new() { Name = "MebelStar" },
+            new() { Name = "DochyloFactory" },
+            new() { Name = "Mebelyer" },
+            new() { Name = "Daniro" },
+            new() { Name = "WoodCraft" },
+            new() { Name = "SoftLine" },
+            new() { Name = "NordicHome" },
+            new() { Name = "UrbanLoft" }
         };
-
         db.ManufacturerRepository.AddRange(manufacturers);
 
-        Category Cat(string name) =>
-            categories.Single(c => c.Name == name);
+        const string cabinetShort =
+            "Minimal cabinets and sideboards for storing clothes, documents and everyday items. Clean design and reliable hardware.";
 
-        Manufacturer M(string name) =>
-            manufacturers.Single(m => m.Name == name);
+        const string cabinetLong =
+            "A collection of cabinets and sideboards for living rooms, bedrooms and home offices. Practical internal layouts, durable hardware and finishes that are easy to clean. Different heights and widths so the pieces fit both compact apartments and larger interiors.";
 
-        Product CreateProduct(
-            string name,
-            decimal price,
-            string image1,
-            string image2,
-            string image3,
-            string hight,
-            string width,
-            string depth,
-            Category category,
-            Manufacturer manufacturer)
+        const string tableShort =
+            "Functional tables for dining, work and study. Stable constructions and comfortable sizes.";
+
+        const string tableLong =
+            "Tables designed as the center of the room. The collection includes writing desks, dining tables and multi-purpose tables in various sizes. Built for everyday use and easy to combine with other furniture pieces.";
+
+        const string sofaShort =
+            "Comfortable sofas for everyday relaxation. Soft seats, supportive armrests and a modern look.";
+
+        const string sofaLong =
+            "Soft sofas designed for cozy living rooms. Sizes range from compact models for small spaces to large sofas for spacious interiors. Durable upholstery, ergonomic seating and simple maintenance.";
+
+        const string chairShort =
+            "Comfortable chairs for dining areas, workspaces and living rooms. Stable, lightweight and stylish.";
+
+        const string chairLong =
+            "A collection of chairs in different shapes: from simple dining chairs to more ergonomic models for long sitting. Stable bases, supportive backs and seats that work well for everyday use.";
+
+        var cabinetImages = new[]
         {
-            return new Product
-            {
-                Name = name,
-                Price = price,
-                ImageUrl_1 = image1,
-                ImageUrl_2 = image2,
-                ImageUrl_3 = image3,
-                Date = now,
-                Hight = hight,
-                Width = width,
-                Deepth = depth,
-                LongDescription = defaultLongDescription,
-                ShortDescription = defaultShortDescription,
-                Category = category,
-                Manufacturer = manufacturer
-            };
-        }
-
-        var products = new List<Product>
-        {
-            // Cabinets & Storage
-            CreateProduct(
-                name: "White Modular Wardrobe",
-                price: 4200,
-                image1: cabinetImage1,
-                image2: cabinetImage2,
-                image3: cabinetImage3,
-                hight: "210",
-                width: "160",
-                depth: "60",
-                category: Cat("Cabinets & Storage"),
-                manufacturer: M("Nordic Home")),
-
-            CreateProduct(
-                name: "Compact Hallway Cabinet",
-                price: 2800,
-                image1: cabinetImage2,
-                image2: cabinetImage1,
-                image3: cabinetImage3,
-                hight: "190",
-                width: "90",
-                depth: "40",
-                category: Cat("Cabinets & Storage"),
-                manufacturer: M("Urban Loft Studio")),
-
-            CreateProduct(
-                name: "Sliding Door Wardrobe",
-                price: 5100,
-                image1: cabinetImage3,
-                image2: cabinetImage1,
-                image3: cabinetImage2,
-                hight: "220",
-                width: "180",
-                depth: "65",
-                category: Cat("Cabinets & Storage"),
-                manufacturer: M("Oak & Steel")),
-
-            // Tables
-            CreateProduct(
-                name: "Oslo Oak Dining Table",
-                price: 3600,
-                image1: tableImage1,
-                image2: tableImage2,
-                image3: tableImage3,
-                hight: "76",
-                width: "180",
-                depth: "90",
-                category: Cat("Tables"),
-                manufacturer: M("Oak & Steel")),
-
-            CreateProduct(
-                name: "Mila Round Dining Table",
-                price: 3100,
-                image1: tableImage2,
-                image2: tableImage1,
-                image3: tableImage3,
-                hight: "75",
-                width: "130",
-                depth: "130",
-                category: Cat("Tables"),
-                manufacturer: M("Nordic Home")),
-
-            CreateProduct(
-                name: "Luna Coffee Table Set",
-                price: 1900,
-                image1: tableImage3,
-                image2: tableImage2,
-                image3: tableImage1,
-                hight: "45",
-                width: "120",
-                depth: "60",
-                category: Cat("Tables"),
-                manufacturer: M("Urban Loft Studio")),
-
-            // Sofas
-            CreateProduct(
-                name: "Cloud 3-Seater Sofa",
-                price: 5200,
-                image1: sofaImage1,
-                image2: sofaImage2,
-                image3: sofaImage3,
-                hight: "90",
-                width: "220",
-                depth: "95",
-                category: Cat("Sofas"),
-                manufacturer: M("ComfortLine")),
-
-            CreateProduct(
-                name: "Nova Corner Sofa",
-                price: 7800,
-                image1: sofaImage2,
-                image2: sofaImage1,
-                image3: sofaImage3,
-                hight: "92",
-                width: "260",
-                depth: "190",
-                category: Cat("Sofas"),
-                manufacturer: M("ComfortLine")),
-
-            CreateProduct(
-                name: "Haven Compact Sofa",
-                price: 4300,
-                image1: sofaImage3,
-                image2: sofaImage1,
-                image3: sofaImage2,
-                hight: "88",
-                width: "190",
-                depth: "90",
-                category: Cat("Sofas"),
-                manufacturer: M("Nordic Home")),
-
-            // Chairs
-            CreateProduct(
-                name: "Ivy Lounge Chair",
-                price: 1700,
-                image1: chairImage1,
-                image2: chairImage2,
-                image3: chairImage3,
-                hight: "85",
-                width: "75",
-                depth: "80",
-                category: Cat("Chairs"),
-                manufacturer: M("Urban Loft Studio")),
-
-            CreateProduct(
-                name: "Orbit Office Chair",
-                price: 2100,
-                image1: chairImage2,
-                image2: chairImage1,
-                image3: chairImage3,
-                hight: "110",
-                width: "65",
-                depth: "70",
-                category: Cat("Chairs"),
-                manufacturer: M("ComfortLine")),
-
-            CreateProduct(
-                name: "Nordic Dining Chair",
-                price: 950,
-                image1: chairImage3,
-                image2: chairImage1,
-                image3: chairImage2,
-                hight: "82",
-                width: "48",
-                depth: "55",
-                category: Cat("Chairs"),
-                manufacturer: M("Oak & Steel"))
+            "https://placehold.co/400x400/transparent/111111/png?text=Cabinet",
+            "https://placehold.co/400x400/transparent/333333/png?text=Cabinet",
+            "https://placehold.co/400x400/transparent/555555/png?text=Cabinet"
         };
+
+        var tableImages = new[]
+        {
+            "https://placehold.co/400x400/transparent/111111/png?text=Table",
+            "https://placehold.co/400x400/transparent/333333/png?text=Table",
+            "https://placehold.co/400x400/transparent/555555/png?text=Table"
+        };
+
+        var sofaImages = new[]
+        {
+            "https://placehold.co/400x400/transparent/111111/png?text=Sofa",
+            "https://placehold.co/400x400/transparent/333333/png?text=Sofa",
+            "https://placehold.co/400x400/transparent/555555/png?text=Sofa"
+        };
+
+        var chairImages = new[]
+        {
+            "https://placehold.co/400x400/transparent/111111/png?text=Chair",
+            "https://placehold.co/400x400/transparent/333333/png?text=Chair",
+            "https://placehold.co/400x400/transparent/555555/png?text=Chair"
+        };
+
+        const int itemsPerCategory = 12;
+
+        var products = new List<Product>();
+
+        products.AddRange(CreateProducts(
+            baseName: "Cabinet",
+            categoryId: 1,
+            basePrice: 3500m,
+            shortDescription: cabinetShort,
+            longDescription: cabinetLong,
+            images: cabinetImages,
+            manufacturerIds: new[] { 1, 4, 5, 7 },
+            count: itemsPerCategory));
+
+        products.AddRange(CreateProducts(
+            baseName: "Table",
+            categoryId: 2,
+            basePrice: 2800m,
+            shortDescription: tableShort,
+            longDescription: tableLong,
+            images: tableImages,
+            manufacturerIds: new[] { 2, 5, 8 },
+            count: itemsPerCategory));
+
+        products.AddRange(CreateProducts(
+            baseName: "Sofa",
+            categoryId: 3,
+            basePrice: 5500m,
+            shortDescription: sofaShort,
+            longDescription: sofaLong,
+            images: sofaImages,
+            manufacturerIds: new[] { 3, 6, 7 },
+            count: itemsPerCategory));
+
+        products.AddRange(CreateProducts(
+            baseName: "Chair",
+            categoryId: 4,
+            basePrice: 1600m,
+            shortDescription: chairShort,
+            longDescription: chairLong,
+            images: chairImages,
+            manufacturerIds: new[] { 2, 4, 6, 8 },
+            count: itemsPerCategory));
 
         db.ProductRepository.AddRange(products);
 
         await db.SaveAsync();
+    }
+
+    private static async Task EnsureRoleAsync(IUnitOfWork db, string roleName)
+    {
+        if (!await db.RoleManager.RoleExistsAsync(roleName))
+        {
+            await db.RoleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    private static async Task<ApplicationUser> CreateUserIfNotExistsAsync(
+        IUnitOfWork db,
+        string email,
+        string password,
+        string firstName,
+        string lastName,
+        string address,
+        string phoneNumber)
+    {
+        var user = await db.UserManager.FindByEmailAsync(email);
+        if (user != null)
+            return user;
+
+        user = new ApplicationUser
+        {
+            Email = email,
+            UserName = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Address = address,
+            PhoneNumber = phoneNumber
+        };
+
+        var result = await db.UserManager.CreateAsync(user, password);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new Exception($"Failed to create seed user {email}: {errors}");
+        }
+
+        return user;
+    }
+
+    private static async Task EnsureUserInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
+    {
+        if (!await db.UserManager.IsInRoleAsync(user, role))
+        {
+            await db.UserManager.AddToRoleAsync(user, role);
+        }
+    }
+
+    private static async Task EnsureUserNotInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
+    {
+        if (await db.UserManager.IsInRoleAsync(user, role))
+        {
+            await db.UserManager.RemoveFromRoleAsync(user, role);
+        }
+    }
+
+    private static IEnumerable<Product> CreateProducts(
+        string baseName,
+        int categoryId,
+        decimal basePrice,
+        string shortDescription,
+        string longDescription,
+        string[] images,
+        int[] manufacturerIds,
+        int count)
+    {
+        var list = new List<Product>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var imgIndex = i % images.Length;
+            var manufacturerId = manufacturerIds[i % manufacturerIds.Length];
+
+            list.Add(new Product
+            {
+                Name = $"{baseName} {i + 1}",
+                Price = basePrice + i * 50,
+                ImageUrl_1 = images[imgIndex],
+                ImageUrl_2 = images[(imgIndex + 1) % images.Length],
+                ImageUrl_3 = images[(imgIndex + 2) % images.Length],
+                Date = DateTime.UtcNow,
+                Hight = "80",
+                Width = "120",
+                Deepth = "60",
+                ShortDescription = shortDescription,
+                LongDescription = longDescription,
+                CategoryId = categoryId,
+                ManufacturerId = manufacturerId
+            });
+        }
+
+        return list;
     }
 }

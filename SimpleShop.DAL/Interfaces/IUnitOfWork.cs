@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Model.Entities;
-using Shop.DAL.Interfaces;
+using SimpleShop.Model.Entities;
 
 namespace SimpleShop.DAL.Interfaces;
 
@@ -18,6 +17,6 @@ public interface IUnitOfWork
     IOrderRepository OrderRepository { get; }
     IOrderDetailRepository OrderDetailRepository { get; }
     IWishListRepository WishListRepository { get; }
-        
+
     Task<int> SaveAsync(CancellationToken cancellationToken = default);
 }

@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.EditUserViewModel
+﻿@model Model.ViewModels.EditUserViewModel
 @{
     ViewBag.Title = "Edit users";
 }
@@ -12,41 +11,43 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="col-md-8 form-group">
                         <label asp-for="Email" class="control-label">Email</label>
-                        <input type="text" asp-for="Email" class="form-control" />
+                        <input type="text" asp-for="Email" class="form-control"/>
                     </div>
                     <div class="col-md-8 form-group">
                         <div class="form-group">
                             <label asp-for="FirstName" class="control-label">First Name</label>
-                            <input type="text" asp-for="FirstName" class="form-control" />
+                            <input type="text" asp-for="FirstName" class="form-control"/>
                         </div>
                     </div>
                     <div class="col-md-8 form-group">
                         <div class="form-group">
                             <label asp-for="LastName" class="control-label">Last Name</label>
-                            <input type="text" asp-for="LastName" class="form-control" />
+                            <input type="text" asp-for="LastName" class="form-control"/>
                         </div>
                     </div>
                     <div class="col-md-8 form-group">
                         <label asp-for="PhoneNumber"></label>
-                        <input asp-for="PhoneNumber" class="form-control" />
+                        <input asp-for="PhoneNumber" class="form-control"/>
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="col-md-8 form-group">
                         <label asp-for="Address"></label>
-                        <input asp-for="Address" class="form-control" />
+                        <input asp-for="Address" class="form-control"/>
                         <span asp-validation-for="Address" class="text-danger"></span>
                     </div>
                     <div class="col-md-8 form-group">
-                        <input type="submit" value="Edit" class="btn_3 button-contactForm" />
+                        <input type="submit" value="Edit" class="btn_3 button-contactForm"/>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+
 @*<div class="container ">
     <div class="col-md-5">
         <form asp-action="Edit" asp-controller="Users">

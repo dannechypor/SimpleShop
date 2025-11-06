@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Model.Models;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
-public class IndexViewModel <T>
+public class IndexViewModel<T>
 {
     public IEnumerable<T> Products { get; set; }
     public PageViewModel PageViewModel { get; set; }

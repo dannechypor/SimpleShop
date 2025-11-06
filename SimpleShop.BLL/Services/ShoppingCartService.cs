@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Model.Entities;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.Model.Entities;
@@ -14,14 +13,66 @@ namespace SimpleShop.BLL.Services;
 
 public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartService
 {
-    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
     private const string CartCookieName = "CartId-cookie";
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     public string Id { get; set; }
-    public IEnumerable<ShoppingCartItem>? ShoppingCartItems { get; set; }
+    public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
+
+    public Task<int> AddToCartAsync(Product product, int qty = 1)
+    {
+        return ChangeItemQuantityAsync(product, qty);
+    }
+
+    public Task<int> RemoveFromCartAsync(Product product)
+    {
+        return ChangeItemQuantityAsync(product, -1);
+    }
+
+    public async Task<IEnumerable<ShoppingCartItem>> GetShoppingCartItemsAsync()
+    {
+        EnsureCartId();
+
+        if (ShoppingCartItems.Any())
+            return ShoppingCartItems;
+
+        ShoppingCartItems = await _context.ShoppingCartItems
+            .Where(e => e.ShoppingCartId == Id)
+            .Include(e => e.Product)
+            .ToListAsync();
+
+        return ShoppingCartItems;
+    }
+
+    public async Task ClearCartAsync()
+    {
+        EnsureCartId();
+
+        var shoppingCartItems = _context
+            .ShoppingCartItems
+            .Where(s => s.ShoppingCartId == Id);
+
+        _context.ShoppingCartItems.RemoveRange(shoppingCartItems);
+
+        await _context.SaveChangesAsync();
+
+        ShoppingCartItems = new List<ShoppingCartItem>();
+    }
+
+    public async Task<(int ItemCount, decimal TotalAmmount)> GetCartCountAndTotalAmmountAsync()
+    {
+        EnsureCartId();
+
+        var items = (await GetShoppingCartItemsAsync()).ToList();
+
+        var itemCount = items.Sum(c => c.Amount);
+        var totalAmount = items.Sum(c => c.Product.Price * c.Amount);
+
+        return (itemCount, totalAmount);
+    }
 
     /// <summary>
-    /// Factory method to get a ShoppingCartService bound to the current HTTP context.
+    ///     Factory method to get a ShoppingCartService bound to the current HTTP context.
     /// </summary>
     public static ShoppingCartService GetCart(IServiceProvider services)
     {
@@ -47,7 +98,10 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
         {
             Expires = DateTimeOffset.UtcNow.AddMonths(2),
             HttpOnly = true,
-            IsEssential = true
+            IsEssential = true,
+            Path = "/",                
+            SameSite = SameSiteMode.None,
+            Secure = true              
         });
 
         return new ShoppingCartService(context)
@@ -56,56 +110,8 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
         };
     }
 
-    public Task<int> AddToCartAsync(Product product, int qty = 1)
-        => ChangeItemQuantityAsync(product, qty);
-
-    public Task<int> RemoveFromCartAsync(Product product)
-        => ChangeItemQuantityAsync(product, -1);
-
-    public async Task<IEnumerable<ShoppingCartItem>> GetShoppingCartItemsAsync()
-    {
-        EnsureCartId();
-
-        if (ShoppingCartItems != null)
-            return ShoppingCartItems;
-
-        ShoppingCartItems = await _context.ShoppingCartItems
-            .Where(e => e.ShoppingCartId == Id)
-            .Include(e => e.Product)
-            .ToListAsync();
-
-        return ShoppingCartItems;
-    }
-
-    public async Task ClearCartAsync()
-    {
-        EnsureCartId();
-
-        var shoppingCartItems = _context
-            .ShoppingCartItems
-            .Where(s => s.ShoppingCartId == Id);
-
-        _context.ShoppingCartItems.RemoveRange(shoppingCartItems);
-
-        await _context.SaveChangesAsync();
-
-        ShoppingCartItems = null;
-    }
-
-    public async Task<(int ItemCount, decimal TotalAmmount)> GetCartCountAndTotalAmmountAsync()
-    {
-        EnsureCartId();
-
-        var items = (await GetShoppingCartItemsAsync()).ToList();
-
-        var itemCount = items.Sum(c => c.Amount);
-        var totalAmount = items.Sum(c => c.Product.Price * c.Amount);
-
-        return (itemCount, totalAmount);
-    }
-
     /// <summary>
-    /// Internal helper to adjust quantity of a product (add/remove).
+    ///     Internal helper to adjust quantity of a product (add/remove).
     /// </summary>
     private async Task<int> ChangeItemQuantityAsync(Product product, int delta)
     {
@@ -121,10 +127,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
 
         if (shoppingCartItem == null)
         {
-            if (delta < 0)
-            {
-                return 0;
-            }
+            if (delta < 0) return 0;
 
             shoppingCartItem = new ShoppingCartItem
             {
@@ -146,7 +149,7 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
 
         await _context.SaveChangesAsync();
 
-        ShoppingCartItems = null;
+        ShoppingCartItems = new List<ShoppingCartItem>();
 
         return shoppingCartItem.Amount;
     }
@@ -154,8 +157,6 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
     private void EnsureCartId()
     {
         if (string.IsNullOrWhiteSpace(Id))
-        {
             throw new InvalidOperationException("Shopping cart Id has not been initialized.");
-        }
     }
 }

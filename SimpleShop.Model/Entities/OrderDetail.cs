@@ -1,6 +1,4 @@
-﻿using Model.Entities;
-
-namespace SimpleShop.Model.Entities;
+﻿namespace SimpleShop.Model.Entities;
 
 public sealed class OrderDetail : BaseEntity
 {

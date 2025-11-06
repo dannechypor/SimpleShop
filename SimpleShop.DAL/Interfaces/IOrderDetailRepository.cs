@@ -1,5 +1,4 @@
-﻿using Shop.DAL.Interfaces;
-using SimpleShop.Model.Entities;
+﻿using SimpleShop.Model.Entities;
 
 namespace SimpleShop.DAL.Interfaces;
 

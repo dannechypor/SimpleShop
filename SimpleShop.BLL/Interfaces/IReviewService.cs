@@ -1,16 +1,13 @@
-﻿using Model.DTO;
-using Shop.BLL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
 
-namespace Shop.BLL.Interfaces
+namespace SimpleShop.BLL.Interfaces;
+
+public interface IReviewService
 {
-    public interface IReviewService
-    {
-        Task<OperationDetails> Create(ReviewDto reviewDTO, string userId);
-        List<ReviewDto> GetReviewsByProductId(int productId);
-        double GetAverageRatingByProductId(int productId);
-    }
+    Task<OperationDetails> Create(ReviewDto reviewDTO, string userId);
+    List<ReviewDto> GetReviewsByProductId(int productId);
+    double GetAverageRatingByProductId(int productId);
 }

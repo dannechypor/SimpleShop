@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.CategoryViewModel
+﻿@model Model.ViewModels.CategoryViewModel
 @{
     ViewBag.Title = "Create User";
 }
@@ -12,7 +11,7 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="col-md-8 form-group ">
                         <label asp-for="Name" class="control-label">Category Name</label>
-                        <input type="text" asp-for="Name" class="form-control" />
+                        <input type="text" asp-for="Name" class="form-control"/>
                     </div>
                     <div class="col-md-8 form-group">
                         <button class="btn_3" type="submit">Add</button>

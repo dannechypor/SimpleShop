@@ -1,16 +1,12 @@
-﻿using Model.DTO;
-using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Interfaces
+namespace SimpleShop.BLL.Interfaces;
+
+public interface ICatalogService
 {
-    public interface ICatalogService
-    {
-         List<Product> GetProductByCategoryId(int id);
-         List<Product> GetProductByManufactureId(int id);
-         ProductDto GetProductById(int id);
-    }
+    List<Product> GetProductByCategoryId(int id);
+    List<Product> GetProductByManufactureId(int id);
+    ProductDto GetProductById(int id);
 }

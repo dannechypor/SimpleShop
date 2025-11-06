@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.DAL.Interfaces;
 using SimpleShop.BLL.Interfaces;
+using SimpleShop.DAL.Interfaces;
 using SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary;
 
 namespace SimpleShop.Web.Controllers;
@@ -10,7 +10,6 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
 {
     public async Task<IActionResult> Index()
     {
-        await shoppingCart.GetShoppingCartItemsAsync();
         var shoppingCartCountTotal = await shoppingCart.GetCartCountAndTotalAmmountAsync();
         var shoppingCartViewModel = new ShoppingCartViewModel
         {
@@ -18,39 +17,28 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
             ShoppingCartItemsTotal = shoppingCartCountTotal.ItemCount,
             ShoppingCartTotal = shoppingCartCountTotal.TotalAmmount
         };
-        
+
         return View(shoppingCartViewModel);
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<IActionResult> AddToShoppingCart(int id)
     {
-        var selectedCake = productRepository.GetById(id);
-        if (selectedCake == null) return NotFound();
+        var product = productRepository.GetById(id);
+        if (product == null) return NotFound();
 
-        await shoppingCart.AddToCartAsync(selectedCake);
+        await shoppingCart.AddToCartAsync(product);
 
         return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public async Task<IActionResult> AddToShoppingCartGet(int id)
-    {
-        var selectedCake = productRepository.GetById(id);
-        if (selectedCake == null) return NotFound();
-
-        await shoppingCart.AddToCartAsync(selectedCake);
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost]
     public async Task<IActionResult> RemoveFromShoppingCart(int id)
     {
-        var selectedCake = productRepository.GetById(id);
-        if (selectedCake == null) return NotFound();
+        var product = productRepository.GetById(id);
+        if (product == null) return NotFound();
 
-        await shoppingCart.RemoveFromCartAsync(selectedCake);
+        await shoppingCart.RemoveFromCartAsync(product);
 
         return RedirectToAction(nameof(Index));
     }

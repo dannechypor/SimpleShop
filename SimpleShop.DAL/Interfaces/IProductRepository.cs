@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using Model.DTO;
-using Model.Entities;
-using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.DAL.Interfaces;
+namespace SimpleShop.DAL.Interfaces;
 
 public interface IProductRepository : IRepository<Product>
 {

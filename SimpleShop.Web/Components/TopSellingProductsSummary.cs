@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.BLL.Interfaces;
-using Model.Models;
-using Model.ViewModels;
+using SimpleShop.BLL.Interfaces;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Components;
+namespace SimpleShop.Web.Components;
 
 public class TopSellingProductsSummary(IProductService productService) : ViewComponent
 {

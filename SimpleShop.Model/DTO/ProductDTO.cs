@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Model.Entities;
 using SimpleShop.Model.Entities;
 
-namespace Model.DTO;
+namespace SimpleShop.Model.DTO;
 
 public class ProductDto
 {

@@ -1,14 +1,15 @@
-﻿using Model.Entities;
-using Shop.BLL.Infrastructure;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Interfaces;
+namespace SimpleShop.BLL.Interfaces;
 
 public interface IManufacturerService
 {
     List<Manufacturer> GetAllManufacturer();
+    PagedResultDto<Manufacturer> GetAllManufacturerPaged(int pageNumber = 1, int pageSize = 10);
     Task<OperationDetails> AddManufacturer(string name);
     Task<OperationDetails> Update(int id, string name);
     Task<OperationDetails> Delete(int id);

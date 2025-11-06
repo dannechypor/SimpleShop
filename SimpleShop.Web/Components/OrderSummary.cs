@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.BLL.Interfaces;
-using ForGoodTime.Views.Shared.Components.ShoppingCartSummary;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary;
 
-namespace ForGoodTime.Components;
+namespace SimpleShop.Web.Components;
 
 public class OrderSummary(IShoppingCartService shoppingCart) : ViewComponent
 {

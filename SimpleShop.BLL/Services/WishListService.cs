@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Model.DTO;
-using Model.Entities;
-using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
-using Shop.DAL.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 
-namespace Shop.BLL.Services;
+namespace SimpleShop.BLL.Services;
 
 public class WishListService(IUnitOfWork db, ApplicationDbContext context)
     : IWishListService
@@ -20,17 +18,17 @@ public class WishListService(IUnitOfWork db, ApplicationDbContext context)
     {
         if (wishListDto == null)
             return new OperationDetails(false, "Wish list data is required", "");
-            
+
         if (wishListDto.ProductId <= 0)
             return new OperationDetails(false, "Valid product ID is required", "");
-            
+
         if (string.IsNullOrWhiteSpace(wishListDto.UserId))
             return new OperationDetails(false, "User ID is required", "");
 
         // Check if product already exists in user's wish list
         var existingItem = db.WishListRepository.Get()
             .FirstOrDefault(w => w.ProductId == wishListDto.ProductId && w.UserId == wishListDto.UserId);
-            
+
         if (existingItem != null)
             return new OperationDetails(false, "Product already exists in wish list", "");
 
@@ -71,10 +69,7 @@ public class WishListService(IUnitOfWork db, ApplicationDbContext context)
 
     public int GetCountOfWishList(string? userId)
     {
-        if (userId == null)
-        {
-            return 0;
-        }
+        if (userId == null) return 0;
 
         var products = db.WishListRepository.All()
             .Where(e => e.UserId == userId)
@@ -83,7 +78,7 @@ public class WishListService(IUnitOfWork db, ApplicationDbContext context)
                 Id = e.ProductId
             }).ToList();
 
-        return (products.Count);
+        return products.Count;
     }
 
     public async Task<OperationDetails> DeleteRelationship(int productId, string userId)
@@ -93,10 +88,10 @@ public class WishListService(IUnitOfWork db, ApplicationDbContext context)
 
         var wishListItem = context.WishListItems
             .FirstOrDefault(p => p.ProductId == productId && p.UserId == userId);
-        
-        if (wishListItem == null) 
+
+        if (wishListItem == null)
             return new OperationDetails(false, "Wish list item not found", "");
-        
+
         context.WishListItems.Remove(wishListItem);
         await context.SaveChangesAsync();
 

@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>default</LangVersion>
-    <Nullable>enable</Nullable>
-    <RootNamespace>SimpleShop.BLL</RootNamespace>
-    <ImplicitUsings>disable</ImplicitUsings>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>default</LangVersion>
+        <Nullable>enable</Nullable>
+        <RootNamespace>SimpleShop.BLL</RootNamespace>
+        <ImplicitUsings>disable</ImplicitUsings>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleShop.Model\SimpleShop.Model.csproj" />
-    <ProjectReference Include="..\SimpleShop.DAL\SimpleShop.DAL.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SimpleShop.Model\SimpleShop.Model.csproj"/>
+        <ProjectReference Include="..\SimpleShop.DAL\SimpleShop.DAL.csproj"/>
+    </ItemGroup>
 
 </Project>

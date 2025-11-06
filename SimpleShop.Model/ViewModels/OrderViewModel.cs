@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Model.ViewModels;
+namespace SimpleShop.Model.ViewModels;
 
 public class OrderViewModel
 {
@@ -9,9 +9,7 @@ public class OrderViewModel
 
     public DateTime OrderPlaced { get; set; }
     public decimal OrderTotal { get; set; }
-
-    public string UserId { get; set; }
-
+    
     [StringLength(255)]
     [Display(Name = "First Name")]
     [Required(ErrorMessage = "First Name is required")]

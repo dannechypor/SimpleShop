@@ -1,12 +1,11 @@
-﻿using Model.DTO;
-using Shop.BLL.Infrastructure;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
 
-namespace Shop.BLL.Interfaces;
+namespace SimpleShop.BLL.Interfaces;
 
 public interface IUserService
 {
     Task<OperationDetails> Create(UserDto userDto);
     Task<bool> Authenticate(UserDto userDto);
-        
 }

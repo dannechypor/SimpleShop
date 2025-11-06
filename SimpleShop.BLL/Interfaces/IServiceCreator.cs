@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 
 namespace SimpleShop.BLL.Interfaces;

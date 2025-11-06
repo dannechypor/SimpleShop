@@ -1,11 +1,9 @@
-﻿using Model.DTO;
-using Model.Entities;
-using Model.Models;
-using AutoMapper;
-using Model.ViewModels;
+﻿using AutoMapper;
+using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
+using SimpleShop.Model.ViewModels;
 
-namespace ForGoodTime.Mapping;
+namespace SimpleShop.Web.Mapping;
 
 public class AutoMapperProfile : Profile
 {
@@ -15,9 +13,9 @@ public class AutoMapperProfile : Profile
         CreateMap<UserDto, ApplicationUser>();
         CreateMap<LoginViewModel, UserDto>();
         CreateMap<RegisterViewModel, UserDto>()
-            .ForMember(dest => 
-                dest.Role, 
-                opts => 
+            .ForMember(dest =>
+                    dest.Role,
+                opts =>
                     opts.MapFrom(src => "user"));
 
         CreateMap<OrderDto, Order>();
@@ -34,5 +32,8 @@ public class AutoMapperProfile : Profile
 
         CreateMap<ReviewViewModel, OrderDto>();
         CreateMap<OrderDto, ReviewViewModel>();
+
+        CreateMap<Review, ReviewDto>();
+        CreateMap<ReviewDto, Review>();
     }
 }

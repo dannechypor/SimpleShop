@@ -1,19 +1,15 @@
-﻿using Model.DTO;
-using Model.Entities;
-using Model.Entities.Enums;
-using Shop.BLL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using SimpleShop.BLL.Infrastructure;
+using SimpleShop.Model.DTO;
+using SimpleShop.Model.Entities.Enums;
 
-namespace Shop.BLL.Interfaces
+namespace SimpleShop.BLL.Interfaces;
+
+public interface IOrderService
 {
-    public interface IOrderService
-    {
-        Task CreateOrderAsync(OrderDto orderDto);
-        List<MyOrderInfoDto> GetAllOrdersAsync(string userId);
-        List<MyOrderInfoDto> GetAllOrdersAsync();
-        Task<OperationDetails> ChangeOrderStatus(int oederId, OrderStatus status);
-    }
+    Task CreateOrderAsync(OrderDto orderDto);
+    List<MyOrderInfoDto> GetAllOrdersAsync(string userId);
+    List<MyOrderInfoDto> GetAllOrdersAsync();
+    Task<OperationDetails> ChangeOrderStatus(int oederId, OrderStatus status);
 }
