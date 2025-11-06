@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Model.ViewModels;
 
-namespace Model.Models
+public class FilterModel
 {
-   public class FilterModel
-    {
-        public bool small { get; set; } = false;
-        public bool medium { get; set; }
-        public bool big { get; set; } 
-    }
+    public bool Small { get; set; } = false;
+    public bool Medium { get; set; }
+    public bool Big { get; set; }
 }

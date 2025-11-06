@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Entities;
 using Model.Models;
+using Model.ViewModels;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 
@@ -21,7 +22,7 @@ public class AccountController(SignInManager<ApplicationUser> authenticationMana
     public async Task<ActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
-        var userDto = new UserDTO { Email = model.Email, Password = model.Password };
+        var userDto = new UserDto { Email = model.Email, Password = model.Password };
         var auth = await userService.Authenticate(userDto);
         if (!auth)
             ModelState.AddModelError("", "Incorrect Login or Password");
@@ -42,7 +43,7 @@ public class AccountController(SignInManager<ApplicationUser> authenticationMana
     {
         if (!ModelState.IsValid) return View(model);
 
-        var userDto = new UserDTO
+        var userDto = new UserDto
         {
             Email = model.Email,
             FirstName = model.FirstName,

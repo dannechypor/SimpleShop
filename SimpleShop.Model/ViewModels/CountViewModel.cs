@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Model.ViewModels;
 
-namespace Model.Models
+public class CountViewModel
 {
-    public class CountViewModel
-    {
-       public int Count { get; set; }
-    }
+    public int Count { get; set; }
 }

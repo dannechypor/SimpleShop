@@ -1,15 +1,12 @@
-﻿using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.Models;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class IndexViewModel <T>
 {
-    public class IndexViewModel <T>
-    {
-        public IEnumerable<T> Products { get; set; }
-        public PageViewModel PageViewModel { get; set; }
-        public FilterViewModel FilterViewModel { get; set; }
-        public SortViewModel SortViewModel { get; set; }
-    }
+    public IEnumerable<T> Products { get; set; }
+    public PageViewModel PageViewModel { get; set; }
+    public FilterViewModel FilterViewModel { get; set; }
+    public SortViewModel SortViewModel { get; set; }
 }

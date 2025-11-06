@@ -1,18 +1,15 @@
-﻿using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.Entities;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class CategoryListViewModel
 {
-    public class CategoryListViewModel
+
+    public IEnumerable<Category> Categories { get; set; }
+
+    public CategoryListViewModel()
     {
-
-        public IEnumerable<Category> Categories { get; set; }
-
-        public CategoryListViewModel()
-        {
-            Categories = new List<Category>();
-        }
+        Categories = new List<Category>();
     }
 }

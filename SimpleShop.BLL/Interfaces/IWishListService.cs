@@ -12,7 +12,7 @@ namespace Shop.BLL.Interfaces
 {
     public interface IWishListService
     {
-        Task AddToWhishList([FromForm]WishListDTO wishListDto);
+        Task AddToWhishList([FromForm]WishListDto wishListDto);
         List<Product> GetAllProductIdByUser(string userId);
         int GetCountOfWishList(string? userId);
         Task<OperationDetails> DeleteRelationship(int productID, string userId);

@@ -10,7 +10,7 @@ namespace Shop.BLL.Services;
 
 public class ReviewService(IUnitOfWork db) : IReviewService
 {
-    public async Task<OperationDetails> Create(ReviewDTO reviewDto, string userId)
+    public async Task<OperationDetails> Create(ReviewDto reviewDto, string userId)
     {
         db.ReviewRepository.Add(new Review
         {

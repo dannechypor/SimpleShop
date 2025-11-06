@@ -20,9 +20,9 @@ public class OrderService(
     IUnitOfWork db)
     : IOrderService
 {
-    public async Task CreateOrderAsync([FromForm] OrderDTO orderDto)
+    public async Task CreateOrderAsync([FromForm] OrderDto orderDto)
     {
-        var order = mapper.Map<OrderDTO, Order>(orderDto);
+        var order = mapper.Map<OrderDto, Order>(orderDto);
         order.OrderPlaced = DateTime.UtcNow;
         order.Status = OrderStatus.Processing;
         db.OrderRepository.Add(order);
@@ -45,13 +45,13 @@ public class OrderService(
     }
 
 
-    public List<MyOrderInfoDTO> GetAllOrdersAsync(string userId)
+    public List<MyOrderInfoDto> GetAllOrdersAsync(string userId)
     {
         var orders = db.OrderRepository.All().Where(e => e.UserId == userId)
             .Include(e => e.OrderLines)
-            .Select(e => new MyOrderInfoDTO
+            .Select(e => new MyOrderInfoDto
             {
-                Orders = new OrderDTO
+                Orders = new OrderDto
                 {
                     OrderId = e.OrderId,
                     Address = e.Address,
@@ -62,7 +62,7 @@ public class OrderService(
                     OrderPlaced = e.OrderPlaced,
                     Status = e.Status
                 },
-                ProductOrderInfos = e.OrderLines.Select(o => new ProductOrderInfoDTO
+                ProductOrderInfos = e.OrderLines.Select(o => new ProductOrderInfoDto
                 {
                     ProductId = o.ProductId,
                     Name = o.Name,
@@ -75,13 +75,13 @@ public class OrderService(
         return orders;
     }
 
-    public List<MyOrderInfoDTO> GetAllOrdersAsync()
+    public List<MyOrderInfoDto> GetAllOrdersAsync()
     {
         var orders = db.OrderRepository.All()
             .Include(e => e.OrderLines)
-            .Select(e => new MyOrderInfoDTO
+            .Select(e => new MyOrderInfoDto
             {
-                Orders = new OrderDTO
+                Orders = new OrderDto
                 {
                     OrderId = e.OrderId,
                     Address = e.Address,
@@ -92,7 +92,7 @@ public class OrderService(
                     OrderPlaced = e.OrderPlaced
                     //Status = e.Status
                 },
-                ProductOrderInfos = e.OrderLines.Select(o => new ProductOrderInfoDTO
+                ProductOrderInfos = e.OrderLines.Select(o => new ProductOrderInfoDto
                 {
                     ProductId = o.ProductId,
                     Name = o.Name,

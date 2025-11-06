@@ -17,7 +17,7 @@ public class UserService : IUserService
         Database = uow;
     }
 
-    public async Task<OperationDetails> Create(UserDTO userDto)
+    public async Task<OperationDetails> Create(UserDto userDto)
     {
         var user = await Database.UserManager.FindByEmailAsync(userDto.Email);
         if (user == null)
@@ -41,7 +41,7 @@ public class UserService : IUserService
         return new OperationDetails(false, "User with this login already exists", "Email");
     }
 
-    public async Task<bool> Authenticate(UserDTO userDto)
+    public async Task<bool> Authenticate(UserDto userDto)
     {
         var user = await Database.UserManager.FindByEmailAsync(userDto.Email);
         if (user == null) return false;

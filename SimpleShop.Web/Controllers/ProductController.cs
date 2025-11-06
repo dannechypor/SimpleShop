@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Models;
+using Model.ViewModels;
 using Shop.BLL.Interfaces;
 
 namespace ForGoodTime.Controllers;
@@ -26,7 +27,7 @@ public class ProductController(IProductService productService) : Controller
     [HttpPost]
     public async Task<IActionResult> Add(AddProductViewModel model)
     {
-        await productService.AddProduct(new ProductDTO
+        await productService.AddProduct(new ProductDto
         {
             Name = model.Product.Name,
             LongDescription = model.Product.LongDescription,

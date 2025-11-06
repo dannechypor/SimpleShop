@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Model.Entities;
 using Model.Models;
+using Model.ViewModels;
 
 namespace ForGoodTime.Controllers;
 

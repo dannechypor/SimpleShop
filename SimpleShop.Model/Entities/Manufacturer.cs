@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Model.Entities
+namespace Model.Entities;
+
+public sealed class Manufacturer
 {
-    public class Manufacturer 
-    {
-        public int ManufacturerId { get; set; }
-        public string Name { get; set; }
+    public int ManufacturerId { get; set; }
+    public string Name { get; set; }
 
-        public IEnumerable<Product> Products { get; set; }
-    }
+    public IEnumerable<Product> Products { get; set; }
 }

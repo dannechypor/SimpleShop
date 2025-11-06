@@ -43,13 +43,13 @@ public class CatalogService(IUnitOfWork db) : ICatalogService
     }
 
 
-    public ProductDTO GetProductById(int id)
+    public ProductDto GetProductById(int id)
     {
         var product = Database.ProductRepository.All()
             .Where(x => x.Id == id)
             .Include(w => w.Category)
             .Include(z => z.Manufacturer)
-            .Select(e => new ProductDTO
+            .Select(e => new ProductDto
             {
                 Id = e.Id,
                 Name = e.Name,

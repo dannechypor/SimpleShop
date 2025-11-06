@@ -28,7 +28,7 @@ public class ProductService(IUnitOfWork db) : IProductService
         return manufacturers;
     }
 
-    public async Task<OperationDetails> AddProduct(ProductDTO productDto)
+    public async Task<OperationDetails> AddProduct(ProductDto productDto)
     {
         db.ProductRepository.Add(new Product
         {
@@ -52,7 +52,7 @@ public class ProductService(IUnitOfWork db) : IProductService
         return new OperationDetails(true, "Ok", "");
     }
 
-    public IEnumerable<TopSellingDTO> GetTopSellingProducts()
+    public IEnumerable<TopSellingDto> GetTopSellingProducts()
     {
         var top = db.ProductRepository.GetTopSellingProducts();
         return top;

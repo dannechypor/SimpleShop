@@ -1,17 +1,9 @@
-﻿using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.Entities;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class MyWishListViewModel
 {
-   public class MyWishListViewModel
-    {
-        public List<Product> Products { get; set;}
-
-        public MyWishListViewModel()
-        {
-            Products = new List<Product>();
-        }
-    }
+    public List<Product> Products { get; set; }
 }

@@ -1,16 +1,10 @@
-﻿using Model.DTO;
-using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.DTO;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class MyOrderViewModel
 {
-    public class MyOrderViewModel
-    {
-       
-        public IEnumerable<MyOrderInfoDTO> Orders { get; set; }
-        public OrderDTO Statust { get; set; }
-           
-    }
+    public IEnumerable<MyOrderInfoDto> Orders { get; set; }
+    public OrderDto Statust { get; set; }
 }

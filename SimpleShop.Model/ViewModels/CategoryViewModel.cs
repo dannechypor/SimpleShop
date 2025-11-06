@@ -1,18 +1,10 @@
-﻿using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class CategoryViewModel
 {
-    public class CategoryViewModel
-    {
+    public int CategoryId { get; set; }
 
-        public int CategoryId { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-      
-    }
+    [Required] public string Name { get; set; }
 }

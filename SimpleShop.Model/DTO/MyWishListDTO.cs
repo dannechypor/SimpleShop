@@ -1,17 +1,9 @@
-﻿using Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.Entities;
 
-namespace Model.DTO
+namespace Model.DTO;
+
+public class MyWishListDto
 {
-    public class MyWishListDTO
-    {
-        public List<Product> Products { get; set; }
-
-        public MyWishListDTO()
-        {
-            Products = new List<Product>();
-        }
-    }
+    public List<Product> Products { get; set; } = [];
 }

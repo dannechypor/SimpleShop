@@ -13,7 +13,7 @@ namespace Shop.BLL.Interfaces
          List<Manufacturer> GetAllManufacturer();
          List<Product> GetProductByCategoryId(int id);
          List<Product> GetProductByManufactureId(int id);
-         ProductDTO GetProductById(int id);
+         ProductDto GetProductById(int id);
 
     }
 }

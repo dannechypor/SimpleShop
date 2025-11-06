@@ -1,24 +1,13 @@
-﻿using Model.Entities;
-using Model.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.Entities;
+using Model.Models;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class AddProductViewModel
 {
-    public class AddProductViewModel
-    {
-        public IEnumerable<Category> Categories { get; set; }
-        public ProductViewModel Product { get; set; }
+    public IEnumerable<Category> Categories { get; set; }
+    public ProductViewModel Product { get; set; }
 
-      
-
-        public IEnumerable<Manufacturer> Manufacturers { get; set; }
-
-        public AddProductViewModel()
-        {
-            Categories = new List<Category>();
-            Manufacturers = new List<Manufacturer>();
-        }
-    }
+    public IEnumerable<Manufacturer> Manufacturers { get; set; }
 }

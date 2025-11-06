@@ -5,6 +5,7 @@ using Model.Models;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 using System.Security.Claims;
+using Model.ViewModels;
 
 namespace ForGoodTime.Controllers
 {
@@ -13,7 +14,7 @@ namespace ForGoodTime.Controllers
         [HttpGet]
         public async Task<IActionResult> AddToWishList(WishListItemViewModel model, int id)
         {
-            var wishList = mapper.Map<WishListItemViewModel, WishListDTO>(model);
+            var wishList = mapper.Map<WishListItemViewModel, WishListDto>(model);
             wishList.ProductId = id;
             wishList.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

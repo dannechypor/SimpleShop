@@ -14,7 +14,7 @@ namespace Shop.BLL.Services;
 public class WishListService(IUnitOfWork db, ApplicationDbContext context)
     : IWishListService
 {
-    public async Task AddToWhishList([FromForm] WishListDTO wishListDto)
+    public async Task AddToWhishList([FromForm] WishListDto wishListDto)
     {
         var whishList = new WhishListItem
         {

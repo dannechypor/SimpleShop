@@ -2,6 +2,7 @@
 using Model.Entities;
 using Model.Models;
 using AutoMapper;
+using Model.ViewModels;
 
 namespace ForGoodTime.Mapping;
 
@@ -9,28 +10,28 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<ApplicationUser, UserDTO>();
-        CreateMap<UserDTO, ApplicationUser>();
-        CreateMap<LoginViewModel, UserDTO>();
-        CreateMap<RegisterViewModel, UserDTO>()
+        CreateMap<ApplicationUser, UserDto>();
+        CreateMap<UserDto, ApplicationUser>();
+        CreateMap<LoginViewModel, UserDto>();
+        CreateMap<RegisterViewModel, UserDto>()
             .ForMember(dest => 
                 dest.Role, 
                 opts => 
                     opts.MapFrom(src => "user"));
 
-        CreateMap<OrderDTO, Order>();
-        CreateMap<OrderViewModel, OrderDTO>();
-        CreateMap<MyOrderInfoDTO, Order>();
+        CreateMap<OrderDto, Order>();
+        CreateMap<OrderViewModel, OrderDto>();
+        CreateMap<MyOrderInfoDto, Order>();
 
-        CreateMap<MyOrderInfoDTO, MyOrderViewModel>();
+        CreateMap<MyOrderInfoDto, MyOrderViewModel>();
 
-        CreateMap<WishListDTO, WhishListItem>();
-        CreateMap<WishListItemViewModel, WishListDTO>();
+        CreateMap<WishListDto, WhishListItem>();
+        CreateMap<WishListItemViewModel, WishListDto>();
 
-        CreateMap<MyWishListDTO, MyWishListViewModel>();
-        CreateMap<MyWishListViewModel, MyWishListDTO>();
+        CreateMap<MyWishListDto, MyWishListViewModel>();
+        CreateMap<MyWishListViewModel, MyWishListDto>();
 
-        CreateMap<ReviewViewModel, OrderDTO>();
-        CreateMap<OrderDTO, ReviewViewModel>();
+        CreateMap<ReviewViewModel, OrderDto>();
+        CreateMap<OrderDto, ReviewViewModel>();
     }
 }

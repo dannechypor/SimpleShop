@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Model.Entities.Enums;
 
-namespace Model.Entities.Enums
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-        Processing,
-        Sent,
-        Completed,
-        Canceled
-    }
+    Processing,
+    Sent,
+    Completed,
+    Canceled
 }

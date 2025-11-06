@@ -6,7 +6,7 @@ namespace Shop.BLL.Interfaces;
 
 public interface IUserService
 {
-    Task<OperationDetails> Create(UserDTO userDto);
-    Task<bool> Authenticate(UserDTO userDto);
+    Task<OperationDetails> Create(UserDto userDto);
+    Task<bool> Authenticate(UserDto userDto);
         
 }

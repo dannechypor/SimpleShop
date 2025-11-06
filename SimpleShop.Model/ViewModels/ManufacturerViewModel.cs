@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class ManufacturerViewModel
 {
-    public class ManufacturerViewModel
-    {
-        public int ManufacturerId { get; set; }
-        [Required]
-        public string Name { get; set; }
-    }
+    public int ManufacturerId { get; set; }
+    [Required] public string Name { get; set; }
 }

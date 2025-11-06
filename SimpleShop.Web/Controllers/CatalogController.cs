@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Entities;
 using Model.Models;
+using Model.ViewModels;
 using Shop.BLL.Interfaces;
 using Shop.DAL;
 using Shop.DAL.EF;
@@ -26,7 +27,7 @@ public class CatalogController(
     {
         var category = CatalogService.GetAllCategory().ToList();
         var manufacturers = CatalogService.GetAllManufacturer().ToList();
-        var product = new ProductDTO();
+        var product = new ProductDto();
         IEnumerable<Product> Items = new List<Product>();
         const int pageSize = 6;
 
@@ -82,7 +83,7 @@ public class CatalogController(
     [HttpPost]
     public async Task<IActionResult> Details(CatalogProductListViewModel model)
     {
-        var review = mapper.Map<ReviewViewModel, ReviewDTO>(model.Review);
+        var review = mapper.Map<ReviewViewModel, ReviewDto>(model.Review);
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         await ReviewService.Create(review, userId);
 

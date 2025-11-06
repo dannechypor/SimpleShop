@@ -11,9 +11,9 @@ namespace Shop.BLL.Interfaces
 {
     public interface IOrderService
     {
-        Task CreateOrderAsync(OrderDTO orderDto);
-        List<MyOrderInfoDTO> GetAllOrdersAsync(string userId);
-        List<MyOrderInfoDTO> GetAllOrdersAsync();
+        Task CreateOrderAsync(OrderDto orderDto);
+        List<MyOrderInfoDto> GetAllOrdersAsync(string userId);
+        List<MyOrderInfoDto> GetAllOrdersAsync();
         Task<OperationDetails> ChangeOrderStatus(int oederId, OrderStatus status);
     }
 }

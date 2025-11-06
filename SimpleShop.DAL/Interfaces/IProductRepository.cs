@@ -8,5 +8,5 @@ public interface IProductRepository : IRepository<Product>
 {
     IEnumerable<Product> GetProductsByCategoryId(int categoryId);
     IEnumerable<Product> GetProductsByManufacturerId(int manufacturerId);
-    IEnumerable<TopSellingDTO> GetTopSellingProducts();
+    IEnumerable<TopSellingDto> GetTopSellingProducts();
 }

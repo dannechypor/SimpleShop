@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Models;
+using Model.ViewModels;
 using Shop.BLL.Interfaces;
 
 namespace ForGoodTime.Controllers;
@@ -33,7 +34,7 @@ public class OrderController(
             return View(model);
         }
 
-        var order = mapper.Map<OrderViewModel, OrderDTO>(model);
+        var order = mapper.Map<OrderViewModel, OrderDto>(model);
         order.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         await orderService.CreateOrderAsync(order);
 

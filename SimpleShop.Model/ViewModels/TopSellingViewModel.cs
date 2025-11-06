@@ -1,12 +1,9 @@
-﻿using Model.DTO;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Model.DTO;
 
-namespace Model.Models
+namespace Model.ViewModels;
+
+public class TopSellingViewModel
 {
-    public class TopSellingViewModel
-    {
-      public IEnumerable<TopSellingDTO> Tops { get; set; }
-    }
+    public IEnumerable<TopSellingDto> Tops { get; set; }
 }

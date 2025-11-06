@@ -10,9 +10,9 @@ namespace Shop.DAL.Repositories;
 
 public class ProductRepository(ApplicationDbContext db) : Repository<Product>(db), IProductRepository
 {
-    public IEnumerable<TopSellingDTO> GetTopSellingProducts()
+    public IEnumerable<TopSellingDto> GetTopSellingProducts()
     {
-        var products = Context.Products.Include(o => o.Orders).Select(x => new TopSellingDTO
+        var products = Context.Products.Include(o => o.Orders).Select(x => new TopSellingDto
         {
             Price = x.Price, Image = x.ImageUrl_1, Name = x.Name, Count = x.Orders.Sum(q => q.Amount)
         }).OrderByDescending(z => z.Count).Take(10);
