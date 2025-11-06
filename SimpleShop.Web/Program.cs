@@ -72,7 +72,7 @@ builder.Services.AddTransient<IReviewService, ReviewService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IManufacturerService, ManufacturerService>();
 builder.Services.AddTransient<IWishListService, WishListService>();
-builder.Services.AddScoped<IShoppingCartService>(ShoppingCartService.GetCart);
+builder.Services.AddTransient<IShoppingCartService>(ShoppingCartService.GetCart);
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 

@@ -1,6 +1,4 @@
-﻿@using ForGoodTime.Views.Shared.Components.ShoppingCartSummary
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model ShoppingCartViewModel
+﻿@model SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary.ShoppingCartViewModel
 
 @{
 var hasItems = Model?.ShoppingCart?.ShoppingCartItems != null
@@ -49,23 +47,20 @@ else
                         <td>
                             <h5>@item.Product.Price $</h5>
                         </td>
-
                         <td>
-                            <form class="d-inline align-middle"
-                                  asp-action="RemoveFromShoppingCart"
-                                  asp-controller="ShoppingCart"
-                                  asp-route-id="@item.ProductId"
-                                  method="post">
-                                <button class="btn fa fa-minus fa-small" aria-hidden="true"></button>
-                            </form>
+                            <a asp-action="RemoveFromShoppingCart"
+                               asp-controller="ShoppingCart"
+                               asp-route-id="@item.ProductId"
+                               class="btn fa fa-minus fa-small" aria-hidden="true">
+                            </a>
+
                             <span style="padding:1px 10px">@item.Amount</span>
-                            <form class="d-inline align-middle"
-                                  asp-action="AddToShoppingCart"
-                                  asp-controller="ShoppingCart"
-                                  asp-route-id="@item.ProductId"
-                                  method="post">
-                                <button class="btn fa fa-plus fa-small" aria-hidden="true"></button>
-                            </form>
+
+                            <a asp-action="AddToShoppingCart"
+                               asp-controller="ShoppingCart"
+                               asp-route-id="@item.ProductId"
+                               class="btn fa fa-plus fa-small" aria-hidden="true">
+                            </a>
                         </td>
                         <td>
                             <h5>@(item.Product.Price * item.Amount) $</h5>

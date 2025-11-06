@@ -98,7 +98,10 @@ public class ShoppingCartService(ApplicationDbContext context) : IShoppingCartSe
         {
             Expires = DateTimeOffset.UtcNow.AddMonths(2),
             HttpOnly = true,
-            IsEssential = true
+            IsEssential = true,
+            Path = "/",                
+            SameSite = SameSiteMode.None,
+            Secure = true              
         });
 
         return new ShoppingCartService(context)
