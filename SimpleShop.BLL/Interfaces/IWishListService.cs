@@ -1,0 +1,21 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Model.DTO;
+using Model.Entities;
+using Model.Models;
+using Shop.BLL.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using SimpleShop.Model.Entities;
+
+namespace Shop.BLL.Interfaces
+{
+    public interface IWishListService
+    {
+        Task<OperationDetails> AddToWhishList([FromForm]WishListDto wishListDto);
+        List<Product> GetAllProductIdByUser(string userId);
+        int GetCountOfWishList(string? userId);
+        Task<OperationDetails> DeleteRelationship(int productID, string userId);
+    }
+}
