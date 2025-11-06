@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Model.DTO;
 using Model.Entities;
-using Model.Models;
 using Model.ViewModels;
-using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 
 namespace ForGoodTime.Controllers;

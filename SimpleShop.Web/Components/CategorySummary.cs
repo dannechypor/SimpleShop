@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model.Models;
-using Model.ViewModels;
-using Shop.BLL.Interfaces;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.Model.ViewModels;
 

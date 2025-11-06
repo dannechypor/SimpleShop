@@ -1,8 +1,7 @@
-﻿using Model.DTO;
-using Model.Entities;
-using Shop.BLL.Infrastructure;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Model.DTO;
+using Shop.BLL.Infrastructure;
 using SimpleShop.Model.DTO;
 using SimpleShop.Model.Entities;
 

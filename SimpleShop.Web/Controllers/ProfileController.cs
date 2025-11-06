@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Model.Entities;
 using Model.ViewModels;
-using System;
-using System.Threading.Tasks;
 
 namespace SimpleShop.Web.Controllers;
 
@@ -14,12 +11,15 @@ public class ProfileController(
     ILogger<ProfileController> logger)
     : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-    private readonly SignInManager<ApplicationUser> _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
     private readonly ILogger<ProfileController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    [TempData]
-    public string StatusMessage { get; set; }
+    private readonly SignInManager<ApplicationUser> _signInManager =
+        signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+
+    private readonly UserManager<ApplicationUser> _userManager =
+        userManager ?? throw new ArgumentNullException(nameof(userManager));
+
+    [TempData] public string StatusMessage { get; set; }
 
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -46,10 +46,7 @@ public class ProfileController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(PersonViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
+        if (!ModelState.IsValid) return View(model);
 
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -111,10 +108,7 @@ public class ProfileController(
             throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
         var hasPassword = await _userManager.HasPasswordAsync(user);
-        if (!hasPassword)
-        {
-            return RedirectToAction(nameof(SetPassword));
-        }
+        if (!hasPassword) return RedirectToAction(nameof(SetPassword));
 
         var model = new ChangeUserPasswordModel { StatusMessage = StatusMessage };
         return View(model);
@@ -153,10 +147,7 @@ public class ProfileController(
             throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
         var hasPassword = await _userManager.HasPasswordAsync(user);
-        if (hasPassword)
-        {
-            return RedirectToAction(nameof(ChangePassword));
-        }
+        if (hasPassword) return RedirectToAction(nameof(ChangePassword));
 
         var model = new SetPasswordViewModel { StatusMessage = StatusMessage };
         return View(model);
@@ -166,10 +157,7 @@ public class ProfileController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
+        if (!ModelState.IsValid) return View(model);
 
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -182,7 +170,7 @@ public class ProfileController(
             return View(model);
         }
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, false);
         StatusMessage = "Your password has been set.";
 
         return RedirectToAction(nameof(SetPassword));

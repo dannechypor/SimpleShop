@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Model.Entities;
-using Shop.DAL.Interfaces;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Model.Entities;
+using Shop.DAL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.DAL.Interfaces;
 
@@ -23,8 +23,8 @@ public sealed class UnitOfWork(
     IWishListRepository wishListRepository)
     : IUnitOfWork
 {
-    private readonly ApplicationDbContext _dbContext = dbContext 
-        ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ApplicationDbContext _dbContext = dbContext
+                                                       ?? throw new ArgumentNullException(nameof(dbContext));
 
     public UserManager<ApplicationUser> UserManager { get; } =
         userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -57,5 +57,7 @@ public sealed class UnitOfWork(
         wishListRepository ?? throw new ArgumentNullException(nameof(wishListRepository));
 
     public Task<int> SaveAsync(CancellationToken cancellationToken = default)
-        => _dbContext.SaveChangesAsync(cancellationToken);
+    {
+        return _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

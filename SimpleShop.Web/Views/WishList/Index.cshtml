@@ -1,6 +1,4 @@
-﻿@using Model.Models
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.MyWishListViewModel
+﻿@model Model.ViewModels.MyWishListViewModel
 @if (Model.Products.Count() <= 0)
 {
     <div class="container box_1170 border-top-generic">
@@ -16,45 +14,46 @@
 }
 else
 {
-<div class="container box_1170 border-top-generic">
-    <div class="section padding_top">
-        <div class="row">
-            @await Html.PartialAsync("_PartialMenu")
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
+    <div class="container box_1170 border-top-generic">
+        <div class="section padding_top">
+            <div class="row">
+                @await Html.PartialAsync("_PartialMenu")
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
 
-                                @foreach (var item in Model.Products)
-                                {
-                                    <tr>
-                                        <td>
-                                            <div class="media">
-                                                <div class="d-flex">
-                                                    <img src="@item.ImageUrl_1" width="130" height="100" alt="" />
+                                    @foreach (var item in Model.Products)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="d-flex">
+                                                        <img src="@item.ImageUrl_1" width="130" height="100" alt=""/>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p>@item.Name</p>
+                                                    </div>
                                                 </div>
-                                                <div class="media-body">
-                                                    <p>@item.Name</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>@item.Price грн</td>
+                                            </td>
+                                            <td>@item.Price грн</td>
 
-                                        <td>
-                                            <a asp-action="Delete" asp-controller="WishList" asp-route-id="@item.Id" class="btn_3">Видалити </a>
+                                            <td>
+                                                <a asp-action="Delete" asp-controller="WishList" asp-route-id="@item.Id"
+                                                   class="btn_3">Видалити </a>
 
 
-                                        </td>
-                                    </tr>
-                                }
-                            </table>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 }
 

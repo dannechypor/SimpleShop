@@ -41,7 +41,7 @@ public class OrderService(
         }
 
         var cartTotal = (await shoppingCartService.GetCartCountAndTotalAmmountAsync()).TotalAmmount;
-        
+
         // Use database transaction to ensure atomicity
         await using var transaction = await context.Database.BeginTransactionAsync();
         try
@@ -64,12 +64,12 @@ public class OrderService(
 
             db.OrderDetailRepository.AddRange(orderDetail);
             await db.SaveAsync();
-            
+
             // Clear cart only after successful order creation
             await shoppingCartService.ClearCartAsync();
-            
+
             await transaction.CommitAsync();
-            logger.LogInformation("Order created successfully. OrderId: {OrderId}, Total: {Total}", 
+            logger.LogInformation("Order created successfully. OrderId: {OrderId}, Total: {Total}",
                 order.OrderId, cartTotal);
         }
         catch (Exception ex)
@@ -148,7 +148,7 @@ public class OrderService(
             logger.LogWarning("ChangeOrderStatus: Order ID is 0");
             return new OperationDetails(false, "Order ID cannot be 0", "");
         }
-        
+
         var order = db.OrderRepository.GetById(oederId);
         if (order == null)
         {
@@ -161,7 +161,7 @@ public class OrderService(
             order.Status = status;
             db.OrderRepository.Update(order);
             await db.SaveAsync();
-            logger.LogInformation("Order status updated. OrderId: {OrderId}, NewStatus: {Status}", 
+            logger.LogInformation("Order status updated. OrderId: {OrderId}, NewStatus: {Status}",
                 oederId, status);
             return new OperationDetails(true, "Order status updated successfully", "");
         }

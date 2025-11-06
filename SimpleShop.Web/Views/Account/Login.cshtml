@@ -1,8 +1,7 @@
 ﻿
-@model Model.ViewModels.LoginViewModel
 @using Microsoft.AspNetCore.Identity
 @using Model.Entities
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Model.ViewModels.LoginViewModel
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Log in";
@@ -34,11 +33,13 @@
                         <form method="post" class="row contact_form">
                             <div class="col-md-12 text-danger" asp-validation-summary="All"></div>
                             <div class="col-md-12 form-group p_star">
-                                <input asp-for="Email" type="email" class="form-control" id="email" name="email" value=""
+                                <input asp-for="Email" type="email" class="form-control" id="email" name="email"
+                                       value=""
                                        placeholder="Email">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input asp-for="Password" type="password" class="form-control" id="password" name="password" value=""
+                                <input asp-for="Password" type="password" class="form-control" id="password"
+                                       name="password" value=""
                                        placeholder="Password">
                             </div>
                             <div class="col-md-12 form-group">
@@ -58,6 +59,7 @@
         </div>
     </div>
 </section>
+
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }

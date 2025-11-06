@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Shop.BLL.Infrastructure;
 
-namespace Shop.BLL.Infrastructure
+public class OperationDetails
 {
-    public class OperationDetails
+    public OperationDetails(bool succedeed, string? message, string prop)
     {
-        public OperationDetails(bool succedeed, string? message, string prop)
-        {
-            Succedeed = succedeed;
-            Message = message;
-            Property = prop;
-        }
-        public bool Succedeed { get; private set; }
-        public string Message { get; private set; }
-        public string Property { get; private set; }
+        Succedeed = succedeed;
+        Message = message;
+        Property = prop;
     }
+
+    public bool Succedeed { get; private set; }
+    public string Message { get; private set; }
+    public string Property { get; private set; }
 }

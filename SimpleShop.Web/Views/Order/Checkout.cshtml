@@ -1,6 +1,4 @@
-﻿@using Model.Models
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.OrderViewModel
+﻿@model Model.ViewModels.OrderViewModel
 
 
 <section class="checkout_area padding_top">
@@ -24,11 +22,11 @@
                         <h3>Confirmation details</h3>
 
                         <div class="col-md-6 form-group p_star">
-                            <input asp-for="FirstName"  class="form-control"/>
+                            <input asp-for="FirstName" class="form-control"/>
                             <span asp-validation-for="FirstName"></span>
                         </div>
                         <div class="col-md-6 form-group p_star">
-                            <input asp-for="LastName" class="form-control" />
+                            <input asp-for="LastName" class="form-control"/>
                             <span asp-validation-for="LastName"></span>
                         </div>
                         @*<div class="col-md-12 form-group">
@@ -36,11 +34,11 @@
                 </div>*@
                         <div class="col-md-6 form-group p_star">
                             <input asp-for="PhoneNumber" type="text" class="form-control"/>
-                            <span asp-validation-for="PhoneNumber" ></span>
+                            <span asp-validation-for="PhoneNumber"></span>
                         </div>
                         <div class="col-md-6 form-group p_star">
                             <input asp-for="Email" type="text" class="form-control"/>
-                            <span asp-validation-for="Email" ></span>
+                            <span asp-validation-for="Email"></span>
                         </div>
                         @*<div class="col-md-12 form-group p_star">
                     <select class="country_select">
@@ -50,8 +48,8 @@
                     </select>
                 </div>*@
                         <div class="col-md-12 form-group p_star">
-                            <input asp-for="Address" type="text" class="form-control" />
-                            <span asp-validation-for="FirstName" ></span>
+                            <input asp-for="Address" type="text" class="form-control"/>
+                            <span asp-validation-for="FirstName"></span>
                         </div>
                         <div class="col-md-12 form-group">
                             <div class="creat_account">

@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Model.Entities;
-using Model.Models;
 using Model.ViewModels;
-using Shop.DAL.Interfaces;
 using SimpleShop.DAL.Interfaces;
 
 namespace ForGoodTime.Controllers;
@@ -13,13 +11,14 @@ namespace ForGoodTime.Controllers;
 public class UsersController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private IUnitOfWork Database { get; }
 
     public UsersController(UserManager<ApplicationUser> userManager, IUnitOfWork uow)
     {
         _userManager = userManager;
         Database = uow;
     }
+
+    private IUnitOfWork Database { get; }
 
     public IActionResult Index()
     {
@@ -98,10 +97,7 @@ public class UsersController : Controller
     public async Task<ActionResult> Delete(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
-        if (user != null)
-        {
-            await _userManager.DeleteAsync(user);
-        }
+        if (user != null) await _userManager.DeleteAsync(user);
 
         return RedirectToAction("Index");
     }
@@ -119,7 +115,7 @@ public class UsersController : Controller
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
-        
+
         var user = await _userManager.FindByIdAsync(model.Id);
         if (user != null)
         {

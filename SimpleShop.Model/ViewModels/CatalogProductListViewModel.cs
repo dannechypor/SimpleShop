@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Model.DTO;
-using Model.Entities;
-using Model.Models;
 using SimpleShop.Model.Entities;
 
 namespace Model.ViewModels;

@@ -1,9 +1,8 @@
-﻿@using Model.Models
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Model.Entities
-@inject SignInManager<ApplicationUser> SignInManager
+﻿@inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Identity
+@using Model.Entities
+@using Model.Entities.Enums
 @model Model.ViewModels.MyOrderViewModel
 
 @if (Model.Orders.Count() <= 0)
@@ -28,35 +27,35 @@ else
                 <div class="col-md-9">
                     <table class="table table-striped text-center">
                         <thead>
-                            <tr>
-                                <th>User Details</th>
-                                <th>Order Details</th>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Order Details</th>
 
-                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                                 {
-                                    <th>Action</th>
-                                 }
-                                else
-                                {
-                                    <th>Status</th>
-                                }
-                            </tr>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <th>Action</th>
+                            }
+                            else
+                            {
+                                <th>Status</th>
+                            }
+                        </tr>
                         </thead>
                         <tbody>
-                         @foreach (var order in Model.Orders)
-                          {
+                        @foreach (var order in Model.Orders)
+                        {
                             <tr>
                                 <td class="text-justify">
                                     <div>
                                         @order.Orders.FirstName @order.Orders.LastName,
-                                      
+
                                     </div>
                                     <div>
                                         @order.Orders.Address
                                     </div>
                                     <div>@order.Orders.PhoneNumber</div>
                                     <div>@order.Orders.Email</div>
-                                    <br />
+                                    <br/>
                                     <div>
                                         @order.Orders.OrderPlaced.ToString("dd/MM/yyyy")
                                     </div>
@@ -64,23 +63,23 @@ else
                                 <td>
                                     <table class="table">
                                         <tbody>
-                                            @foreach (var item in order.ProductOrderInfos)
-                                            {
-                                                <tr>
-                                                    <td>
-                                                        <img src="@item.Image" width="60" height="40" alt="" />
-                                                    </td>
-                                                    <td>
-                                                        @item.Name
-                                                    </td>
-                                                    <td>
-                                                        Qty <br> @item.Amount
-                                                    </td>
-                                                    <td>
-                                                        Price <br> @(item.Price * item.Amount) грн
-                                                    </td>
-                                                </tr>
-                                            }
+                                        @foreach (var item in order.ProductOrderInfos)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <img src="@item.Image" width="60" height="40" alt=""/>
+                                                </td>
+                                                <td>
+                                                    @item.Name
+                                                </td>
+                                                <td>
+                                                    Qty <br> @item.Amount
+                                                </td>
+                                                <td>
+                                                    Price <br> @(item.Price * item.Amount) грн
+                                                </td>
+                                            </tr>
+                                        }
                                         </tbody>
                                     </table>
                                 </td>
@@ -91,14 +90,17 @@ else
                                         <div>
                                             <form asp-controller="Order" asp-action="OrderList">
                                                 <button type="submit"><i class="fa fa-check"></i></button>
-                                                <select asp-for="Statust.Status" asp-items="Html.GetEnumSelectList<Model.Entities.Enums.OrderStatus>()">
-                                                    <option value="@order.Orders.Status" data-display="@order.Orders.Status">@order.Orders.Status </option>
+                                                <select asp-for="Statust.Status"
+                                                        asp-items="Html.GetEnumSelectList<OrderStatus>()">
+                                                    <option value="@order.Orders.Status"
+                                                            data-display="@order.Orders.Status">@order.Orders.Status </option>
 
                                                     @*<option value="@order.Orders.Status">@order.Orders.Status</option>*@
                                                 </select>
-                                                <input type="hidden" asp-for="Statust.OrderId" value="@order.Orders.OrderId" />
+                                                <input type="hidden" asp-for="Statust.OrderId"
+                                                       value="@order.Orders.OrderId"/>
 
-                                            </form>                                         
+                                            </form>
                                         </div>
                                     </td>
                                 }
@@ -111,7 +113,7 @@ else
                                     </td>
                                 }
                             </tr>
-                          }
+                        }
                         </tbody>
                     </table>
                 </div>

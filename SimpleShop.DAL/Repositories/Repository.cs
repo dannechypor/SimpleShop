@@ -10,8 +10,8 @@ namespace SimpleShop.DAL.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    protected readonly ApplicationDbContext Context;
     private readonly DbSet<TEntity> _dbSet;
+    protected readonly ApplicationDbContext Context;
 
     protected Repository(ApplicationDbContext mainDbContext)
     {
@@ -37,8 +37,8 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     }
 
     public virtual IEnumerable<TEntity> Get(
-        Expression<Func<TEntity, bool>>? filter = null, 
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, 
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "")
     {
         IQueryable<TEntity> query = _dbSet;

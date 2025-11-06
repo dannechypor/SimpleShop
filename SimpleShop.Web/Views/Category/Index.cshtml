@@ -1,38 +1,41 @@
-﻿@using Model.Models
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model SimpleShop.Model.ViewModels.CategoryListViewModel
+﻿@model SimpleShop.Model.ViewModels.CategoryListViewModel
 @{
     ViewData["Title"] = "Categories";
 }
 
 
-    <div class="container box_1170 border-top-generic">
-        <div class="section padding_top">
-            <div class="row">
-                @await Html.PartialAsync("_PartialMenu")
-                <div class="col-md-9">
-                    <table class="table">
-                        <tr><th>Id</th><th>Category</th><th>Qty</th><th>Change</th></tr>
-                        @foreach (var item in Model.Categories)
-                        {
-                            <tr>
-                                <td>@item.Id</td>
-                                <td>@item.Name</td>
-                                <td>#</td>
-                                <td>
-                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                    <a asp-action="Add" class="btn btn-success">Добавити</a>
-                </div>
+<div class="container box_1170 border-top-generic">
+    <div class="section padding_top">
+        <div class="row">
+            @await Html.PartialAsync("_PartialMenu")
+            <div class="col-md-9">
+                <table class="table">
+                    <tr>
+                        <th>Id</th>
+                        <th>Category</th>
+                        <th>Qty</th>
+                        <th>Change</th>
+                    </tr>
+                    @foreach (var item in Model.Categories)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>#</td>
+                            <td>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <a asp-action="Add" class="btn btn-success">Добавити</a>
             </div>
         </div>
     </div>
+</div>
 
 

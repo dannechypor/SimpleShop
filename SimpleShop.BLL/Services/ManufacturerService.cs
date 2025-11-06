@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Model.DTO;
 using Shop.BLL.Infrastructure;
-using Shop.BLL.Interfaces;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.Interfaces;
 using SimpleShop.Model.DTO;
@@ -14,7 +12,8 @@ using SimpleShop.Model.Entities;
 
 namespace SimpleShop.BLL.Services;
 
-public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> logger, IMemoryCache cache) : IManufacturerService
+public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> logger, IMemoryCache cache)
+    : IManufacturerService
 {
     private const string CacheKey = "AllManufacturers";
     private static readonly TimeSpan CacheExpiration = TimeSpan.FromMinutes(30);
@@ -31,6 +30,7 @@ public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> lo
         {
             logger.LogDebug("Manufacturers loaded from cache");
         }
+
         return manufacturers;
     }
 
@@ -59,13 +59,13 @@ public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> lo
     {
         if (string.IsNullOrWhiteSpace(Name))
             return new OperationDetails(false, "Manufacturer name is required", "");
-            
+
         if (db.ManufacturerRepository.Get().Any(c => c.Name == Name))
             return new OperationDetails(false, "The same manufacturer already exists in database", "");
 
         db.ManufacturerRepository.Add(new Manufacturer { Name = Name });
         await db.SaveAsync();
-        
+
         // Invalidate cache
         cache.Remove(CacheKey);
         logger.LogInformation("Manufacturer added successfully. Name: {Name}", Name);
@@ -78,7 +78,7 @@ public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> lo
         if (id == 0) return new OperationDetails(false, "Id field is '0'", "");
         if (string.IsNullOrWhiteSpace(name))
             return new OperationDetails(false, "Manufacturer name is required", "");
-            
+
         var manufacturer = db.ManufacturerRepository.GetById(id);
         if (manufacturer == null) return new OperationDetails(false, "Manufacturer not found", "");
 
@@ -89,7 +89,7 @@ public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> lo
         manufacturer.Name = name;
         db.ManufacturerRepository.Update(manufacturer);
         await db.SaveAsync();
-        
+
         // Invalidate cache
         cache.Remove(CacheKey);
         logger.LogInformation("Manufacturer updated successfully. Id: {Id}, Name: {Name}", id, name);
@@ -105,7 +105,7 @@ public class ManufacturerService(IUnitOfWork db, ILogger<ManufacturerService> lo
 
         db.ManufacturerRepository.Delete(manufacturer);
         await db.SaveAsync();
-        
+
         // Invalidate cache
         cache.Remove(CacheKey);
         logger.LogInformation("Manufacturer deleted successfully. Id: {Id}, Name: {Name}", id, manufacturer.Name);

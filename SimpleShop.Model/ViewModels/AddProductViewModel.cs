@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Model.Entities;
-using Model.Models;
 using SimpleShop.Model.Entities;
 
 namespace Model.ViewModels;

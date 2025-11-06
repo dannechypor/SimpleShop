@@ -1,6 +1,4 @@
-﻿
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Model.ViewModels.RegisterViewModel
+﻿@model Model.ViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Register";
 }
@@ -30,7 +28,8 @@
                             <div asp-validation-summary="All" class="text-danger"></div>
 
                             <div class="col-md-12 form-group p_star">
-                                <input asp-for="Email" type="email" class="form-control" id="email" name="email" value=""
+                                <input asp-for="Email" type="email" class="form-control" id="email" name="email"
+                                       value=""
                                        placeholder="Email">
                             </div>
                             <div class="col-md-12 form-group">
@@ -46,11 +45,11 @@
                                 <input asp-for="Address" class="form-control" placeholder="Address" value="">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input asp-for="Password" class="form-control"  value=""
+                                <input asp-for="Password" class="form-control" value=""
                                        placeholder="Пароль">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input asp-for="ConfirmPassword" class="form-control"  value=""
+                                <input asp-for="ConfirmPassword" class="form-control" value=""
                                        placeholder="Confirm password">
                             </div>
                             <div class="col-md-12 form-group">
@@ -58,7 +57,8 @@
                                     Registration
                                 </button>
                             </div>
-                            <p class="small text-center">By clicking the Sign Up button, you agree to our <br><a href="#">Terms &amp; Conditions</a>, and <a href="#">Privacy Policy</a>.</p>
+                            <p class="small text-center">By clicking the Sign Up button, you agree to our <br><a
+                                    href="#">Terms &amp; Conditions</a>, and <a href="#">Privacy Policy</a>.</p>
                         </form>
                     </div>
                 </div>
@@ -68,6 +68,6 @@
 </section>
 
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")  
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
 

@@ -18,6 +18,6 @@ public interface IUnitOfWork
     IOrderRepository OrderRepository { get; }
     IOrderDetailRepository OrderDetailRepository { get; }
     IWishListRepository WishListRepository { get; }
-        
+
     Task<int> SaveAsync(CancellationToken cancellationToken = default);
 }

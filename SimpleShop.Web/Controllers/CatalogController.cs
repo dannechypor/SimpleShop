@@ -3,11 +3,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model.DTO;
-using Model.Entities;
 using Model.Models;
 using Model.ViewModels;
 using Shop.BLL.Interfaces;
-using Shop.DAL;
 using SimpleShop.BLL.Interfaces;
 using SimpleShop.DAL.EF;
 using SimpleShop.Model.Entities;
@@ -41,7 +39,7 @@ public class CatalogController(
         var categories = categoryService.GetAllCategory().ToList();
         var manufacturers = manufacturerService.GetAllManufacturer().ToList();
         var product = new ProductDto();
-        
+
         // Build base query with includes
         var source = context.Products
             .Include(p => p.Category)
@@ -49,26 +47,12 @@ public class CatalogController(
             .AsQueryable();
 
         // Apply filters
-        if (categoryId.HasValue && categoryId.Value > 0)
-        {
-            source = source.Where(p => p.CategoryId == categoryId.Value);
-        }
+        if (categoryId.HasValue && categoryId.Value > 0) source = source.Where(p => p.CategoryId == categoryId.Value);
         if (manufacturerId.HasValue && manufacturerId.Value > 0)
-        {
             source = source.Where(p => p.ManufacturerId == manufacturerId.Value);
-        }
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            source = source.Where(p => p.Name.Contains(search));
-        }
-        if (minPrice.HasValue)
-        {
-            source = source.Where(p => p.Price >= minPrice.Value);
-        }
-        if (maxPrice.HasValue)
-        {
-            source = source.Where(p => p.Price <= maxPrice.Value);
-        }
+        if (!string.IsNullOrWhiteSpace(search)) source = source.Where(p => p.Name.Contains(search));
+        if (minPrice.HasValue) source = source.Where(p => p.Price >= minPrice.Value);
+        if (maxPrice.HasValue) source = source.Where(p => p.Price <= maxPrice.Value);
 
         // Apply sorting
         source = sortOrder switch
@@ -81,7 +65,7 @@ public class CatalogController(
 
         // Get total count before pagination
         var count = source.Count();
-        
+
         // Apply pagination
         var items = source
             .Skip((page - 1) * pageSize)
@@ -93,36 +77,28 @@ public class CatalogController(
         // but with other filters (search, price) applied
         var baseFilteredQuery = context.Products.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
-        {
             baseFilteredQuery = baseFilteredQuery.Where(p => p.Name.Contains(search));
-        }
-        if (minPrice.HasValue)
-        {
-            baseFilteredQuery = baseFilteredQuery.Where(p => p.Price >= minPrice.Value);
-        }
-        if (maxPrice.HasValue)
-        {
-            baseFilteredQuery = baseFilteredQuery.Where(p => p.Price <= maxPrice.Value);
-        }
+        if (minPrice.HasValue) baseFilteredQuery = baseFilteredQuery.Where(p => p.Price >= minPrice.Value);
+        if (maxPrice.HasValue) baseFilteredQuery = baseFilteredQuery.Where(p => p.Price <= maxPrice.Value);
         // Count for "All Products" - without category/manufacturer filters
         var allProductsFilteredCount = baseFilteredQuery.Count();
-        
+
         var categoryCounts = categories.ToDictionary(
             c => c.Id,
             c => baseFilteredQuery.Count(p => p.CategoryId == c.Id)
         );
-        
+
         var manufacturerCounts = manufacturers.ToDictionary(
             m => m.Id,
             m => baseFilteredQuery.Count(p => p.ManufacturerId.HasValue && p.ManufacturerId.Value == m.Id)
         );
 
         product.CategoryId = categoryId ?? 0;
-        
+
         // Get min and max prices for slider
         var minPriceValue = context.Products.Min(p => (decimal?)p.Price) ?? 0;
         var maxPriceValue = context.Products.Max(p => (decimal?)p.Price) ?? 1000;
-        
+
         var pageViewModel = new PageViewModel(count, page, pageSize);
         var viewModel = new IndexViewModel<Product>
         {
@@ -131,7 +107,7 @@ public class CatalogController(
             PageViewModel = pageViewModel,
             Products = items
         };
-        
+
         return View(new CatalogProductListViewModel
         {
             FilterModel = model,

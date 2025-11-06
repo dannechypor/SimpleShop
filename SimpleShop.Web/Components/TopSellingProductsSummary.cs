@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.BLL.Interfaces;
-using Model.Models;
 using Model.ViewModels;
+using Shop.BLL.Interfaces;
 
 namespace ForGoodTime.Components;
 

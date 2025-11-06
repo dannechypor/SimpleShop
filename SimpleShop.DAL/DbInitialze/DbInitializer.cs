@@ -18,21 +18,21 @@ public static class DbInitializer
 
         var adminUser = await CreateUserIfNotExistsAsync(
             db,
-            email: "admin@shop.local",
-            password: "Admin_12345",
-            firstName: "Admin",
-            lastName: "User",
-            address: "Main Street 1, Demo City",
-            phoneNumber: "+10000000001");
+            "admin@shop.local",
+            "Admin_12345",
+            "Admin",
+            "User",
+            "Main Street 1, Demo City",
+            "+10000000001");
 
         var customerUser = await CreateUserIfNotExistsAsync(
             db,
-            email: "customer@shop.local",
-            password: "Customer_12345",
-            firstName: "Customer",
-            lastName: "Demo",
-            address: "Customer Avenue 5, Demo City",
-            phoneNumber: "+10000000002");
+            "customer@shop.local",
+            "Customer_12345",
+            "Customer",
+            "Demo",
+            "Customer Avenue 5, Demo City",
+            "+10000000002");
 
         await EnsureUserInRoleAsync(db, adminUser, "Admin");
         await EnsureUserNotInRoleAsync(db, adminUser, "User");
@@ -43,9 +43,7 @@ public static class DbInitializer
         if (db.ProductRepository.GetAll().Any() ||
             db.CategoryRepository.GetAll().Any() ||
             db.ManufacturerRepository.GetAll().Any())
-        {
             return;
-        }
 
         var categories = new List<Category>
         {
@@ -95,30 +93,30 @@ public static class DbInitializer
 
         var cabinetImages = new[]
         {
-            "https://www.svgrepo.com/download/380355/cabinet-closet-cupboard-furniture-wardrobe.svg",
-            "https://www.svgrepo.com/download/421334/cabinet-closet-cupboard.svg",
-            "https://www.svgrepo.com/download/424289/cabinet-furniture-home-24.svg"
+            "https://placehold.co/400x400/transparent/111111/png?text=Cabinet",
+            "https://placehold.co/400x400/transparent/333333/png?text=Cabinet",
+            "https://placehold.co/400x400/transparent/555555/png?text=Cabinet"
         };
 
         var tableImages = new[]
         {
-            "https://www.svgrepo.com/download/258992/table-furniture-and-household.svg",
-            "https://www.svgrepo.com/download/258988/table-furniture.svg",
-            "https://www.svgrepo.com/download/217058/table-furniture-and-household.svg"
+            "https://placehold.co/400x400/transparent/111111/png?text=Table",
+            "https://placehold.co/400x400/transparent/333333/png?text=Table",
+            "https://placehold.co/400x400/transparent/555555/png?text=Table"
         };
 
         var sofaImages = new[]
         {
-            "https://www.svgrepo.com/download/292743/sofa-furniture-and-household.svg",
-            "https://www.svgrepo.com/download/66889/sofa.svg",
-            "https://www.svgrepo.com/download/216934/sofa.svg"
+            "https://placehold.co/400x400/transparent/111111/png?text=Sofa",
+            "https://placehold.co/400x400/transparent/333333/png?text=Sofa",
+            "https://placehold.co/400x400/transparent/555555/png?text=Sofa"
         };
 
         var chairImages = new[]
         {
-            "https://www.svgrepo.com/download/223866/office-chair-furniture-and-household.svg",
-            "https://www.svgrepo.com/download/92933/office-chair.svg",
-            "https://www.svgrepo.com/download/380364/chair-contemporary-decor-furniture-home-3.svg"
+            "https://placehold.co/400x400/transparent/111111/png?text=Chair",
+            "https://placehold.co/400x400/transparent/333333/png?text=Chair",
+            "https://placehold.co/400x400/transparent/555555/png?text=Chair"
         };
 
         const int itemsPerCategory = 12;
@@ -126,44 +124,44 @@ public static class DbInitializer
         var products = new List<Product>();
 
         products.AddRange(CreateProducts(
-            baseName: "Cabinet",
-            categoryId: 1,
-            basePrice: 3500m,
-            shortDescription: cabinetShort,
-            longDescription: cabinetLong,
-            images: cabinetImages,
-            manufacturerIds: new[] { 1, 4, 5, 7 },
-            count: itemsPerCategory));
+            "Cabinet",
+            1,
+            3500m,
+            cabinetShort,
+            cabinetLong,
+            cabinetImages,
+            new[] { 1, 4, 5, 7 },
+            itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            baseName: "Table",
-            categoryId: 2,
-            basePrice: 2800m,
-            shortDescription: tableShort,
-            longDescription: tableLong,
-            images: tableImages,
-            manufacturerIds: new[] { 2, 5, 8 },
-            count: itemsPerCategory));
+            "Table",
+            2,
+            2800m,
+            tableShort,
+            tableLong,
+            tableImages,
+            new[] { 2, 5, 8 },
+            itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            baseName: "Sofa",
-            categoryId: 3,
-            basePrice: 5500m,
-            shortDescription: sofaShort,
-            longDescription: sofaLong,
-            images: sofaImages,
-            manufacturerIds: new[] { 3, 6, 7 },
-            count: itemsPerCategory));
+            "Sofa",
+            3,
+            5500m,
+            sofaShort,
+            sofaLong,
+            sofaImages,
+            new[] { 3, 6, 7 },
+            itemsPerCategory));
 
         products.AddRange(CreateProducts(
-            baseName: "Chair",
-            categoryId: 4,
-            basePrice: 1600m,
-            shortDescription: chairShort,
-            longDescription: chairLong,
-            images: chairImages,
-            manufacturerIds: new[] { 2, 4, 6, 8 },
-            count: itemsPerCategory));
+            "Chair",
+            4,
+            1600m,
+            chairShort,
+            chairLong,
+            chairImages,
+            new[] { 2, 4, 6, 8 },
+            itemsPerCategory));
 
         db.ProductRepository.AddRange(products);
 
@@ -173,9 +171,7 @@ public static class DbInitializer
     private static async Task EnsureRoleAsync(IUnitOfWork db, string roleName)
     {
         if (!await db.RoleManager.RoleExistsAsync(roleName))
-        {
             await db.RoleManager.CreateAsync(new IdentityRole(roleName));
-        }
     }
 
     private static async Task<ApplicationUser> CreateUserIfNotExistsAsync(
@@ -213,18 +209,12 @@ public static class DbInitializer
 
     private static async Task EnsureUserInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
     {
-        if (!await db.UserManager.IsInRoleAsync(user, role))
-        {
-            await db.UserManager.AddToRoleAsync(user, role);
-        }
+        if (!await db.UserManager.IsInRoleAsync(user, role)) await db.UserManager.AddToRoleAsync(user, role);
     }
 
     private static async Task EnsureUserNotInRoleAsync(IUnitOfWork db, ApplicationUser user, string role)
     {
-        if (await db.UserManager.IsInRoleAsync(user, role))
-        {
-            await db.UserManager.RemoveFromRoleAsync(user, role);
-        }
+        if (await db.UserManager.IsInRoleAsync(user, role)) await db.UserManager.RemoveFromRoleAsync(user, role);
     }
 
     private static IEnumerable<Product> CreateProducts(

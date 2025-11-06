@@ -18,7 +18,7 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
             ShoppingCartItemsTotal = shoppingCartCountTotal.ItemCount,
             ShoppingCartTotal = shoppingCartCountTotal.TotalAmmount
         };
-        
+
         return View(shoppingCartViewModel);
     }
 

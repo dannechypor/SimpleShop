@@ -10,12 +10,12 @@ namespace SimpleShop.BLL.Services;
 
 public class UserService : IUserService
 {
-    private IUnitOfWork Database { get; }
-
     public UserService(IUnitOfWork uow)
     {
         Database = uow;
     }
+
+    private IUnitOfWork Database { get; }
 
     public async Task<OperationDetails> Create(UserDto userDto)
     {

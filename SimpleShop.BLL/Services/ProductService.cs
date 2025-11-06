@@ -31,8 +31,8 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
             .Take(pageSize)
             .ToList();
 
-        logger.LogDebug("GetAllProductPaged: Retrieved {Count} products (page {PageNumber} of {TotalPages})", 
-            items.Count, pageNumber, (int)System.Math.Ceiling(totalCount / (double)pageSize));
+        logger.LogDebug("GetAllProductPaged: Retrieved {Count} products (page {PageNumber} of {TotalPages})",
+            items.Count, pageNumber, (int)Math.Ceiling(totalCount / (double)pageSize));
 
         return new PagedResultDto<Product>
         {
@@ -50,28 +50,29 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
             logger.LogWarning("AddProduct: productDto is null");
             return new OperationDetails(false, "Product data is required", "");
         }
-            
+
         if (string.IsNullOrWhiteSpace(productDto.Name))
         {
             logger.LogWarning("AddProduct: Product name is empty");
             return new OperationDetails(false, "Product name is required", "");
         }
-            
+
         if (productDto.Price <= 0)
         {
             logger.LogWarning("AddProduct: Product price is invalid. Price: {Price}", productDto.Price);
             return new OperationDetails(false, "Product price must be greater than 0", "");
         }
-            
+
         if (productDto.CategoryId <= 0)
         {
             logger.LogWarning("AddProduct: Invalid category ID. CategoryId: {CategoryId}", productDto.CategoryId);
             return new OperationDetails(false, "Valid category ID is required", "");
         }
-            
+
         if (productDto.ManufacturerId <= 0)
         {
-            logger.LogWarning("AddProduct: Invalid manufacturer ID. ManufacturerId: {ManufacturerId}", productDto.ManufacturerId);
+            logger.LogWarning("AddProduct: Invalid manufacturer ID. ManufacturerId: {ManufacturerId}",
+                productDto.ManufacturerId);
             return new OperationDetails(false, "Valid manufacturer ID is required", "");
         }
 
@@ -85,7 +86,8 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
         var manufacturer = db.ManufacturerRepository.GetById(productDto.ManufacturerId);
         if (manufacturer == null)
         {
-            logger.LogWarning("AddProduct: Manufacturer not found. ManufacturerId: {ManufacturerId}", productDto.ManufacturerId);
+            logger.LogWarning("AddProduct: Manufacturer not found. ManufacturerId: {ManufacturerId}",
+                productDto.ManufacturerId);
             return new OperationDetails(false, "Manufacturer not found", "");
         }
 
@@ -109,7 +111,7 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
                 ManufacturerId = productDto.ManufacturerId
             });
             await db.SaveAsync();
-            logger.LogInformation("Product added successfully. Name: {Name}, Price: {Price}", 
+            logger.LogInformation("Product added successfully. Name: {Name}, Price: {Price}",
                 productDto.Name, productDto.Price);
             return new OperationDetails(true, "Product added successfully", "");
         }
@@ -130,19 +132,19 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
     {
         if (productDto == null)
             return new OperationDetails(false, "Product data is required", "");
-            
+
         if (productDto.Id <= 0)
             return new OperationDetails(false, "Valid product ID is required", "");
-            
+
         if (string.IsNullOrWhiteSpace(productDto.Name))
             return new OperationDetails(false, "Product name is required", "");
-            
+
         if (productDto.Price <= 0)
             return new OperationDetails(false, "Product price must be greater than 0", "");
-            
+
         if (productDto.CategoryId <= 0)
             return new OperationDetails(false, "Valid category ID is required", "");
-            
+
         if (productDto.ManufacturerId <= 0)
             return new OperationDetails(false, "Valid manufacturer ID is required", "");
 
@@ -196,7 +198,7 @@ public class ProductService(IUnitOfWork db, ILogger<ProductService> logger) : IP
         {
             db.ProductRepository.Delete(product);
             await db.SaveAsync();
-            logger.LogInformation("Product deleted successfully. ProductId: {ProductId}, Name: {Name}", 
+            logger.LogInformation("Product deleted successfully. ProductId: {ProductId}, Name: {Name}",
                 id, product.Name);
             return new OperationDetails(true, "Product deleted successfully", "");
         }
