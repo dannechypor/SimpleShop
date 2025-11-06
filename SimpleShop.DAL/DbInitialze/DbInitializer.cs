@@ -1,734 +1,340 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Model.Entities;
 using Shop.DAL.Interfaces;
 
-namespace Shop.DAL.DbInitialze;
+namespace SimpleShop.DAL.DbInitialze;
 
 public static class DbInitializer
 {
     public static async Task Seed(IUnitOfWork db)
     {
-        await db.RoleManager.CreateAsync(new IdentityRole("Admin"));
-        await db.RoleManager.CreateAsync(new IdentityRole("User"));
+        // ---------- Identity data ----------
+        var roles = new[] { "Admin", "User" };
 
-        var adminUser = new ApplicationUser
+        foreach (var role in roles)
         {
-            Email = "admin@admin.com",
-            UserName = "admin@admin.com",
-            FirstName = "Dan",
-            LastName = "Nechypor",
-            Address = "Chernivchy , 14",
-            PhoneNumber = "+380936581050"
-        };
-        await db.UserManager.CreateAsync(adminUser, "admin12345");
-        await db.UserManager.AddToRoleAsync(adminUser, "Admin");
+            if (!await db.RoleManager.RoleExistsAsync(role))
+            {
+                await db.RoleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
 
-        var user = new ApplicationUser
+        async Task<ApplicationUser> EnsureUserAsync(
+            string email,
+            string password,
+            string firstName,
+            string lastName,
+            string address,
+            string phone)
         {
-            Email = "user@user.com",
-            UserName = "user@user.com",
-            FirstName = "Dochylo",
-            LastName = "Nazar",
-            Address = "Chernivchy , 19",
-            PhoneNumber = "+380664703735"
+            var user = await db.UserManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                return user;
+            }
+
+            user = new ApplicationUser
+            {
+                Email = email,
+                UserName = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Address = address,
+                PhoneNumber = phone
+            };
+
+            var createResult = await db.UserManager.CreateAsync(user, password);
+            if (!createResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to create seed user {email}: " +
+                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
+            }
+
+            return user;
+        }
+
+        var adminUser = await EnsureUserAsync(
+            email: "admin@simpleshop.local",
+            password: "Admin_12345",
+            firstName: "Alex",
+            lastName: "Admin",
+            address: "Main Street 1, Demo City",
+            phone: "+10000000001");
+
+        var regularUser = await EnsureUserAsync(
+            email: "customer@simpleshop.local",
+            password: "User_12345",
+            firstName: "Jamie",
+            lastName: "Customer",
+            address: "Oak Avenue 5, Demo City",
+            phone: "+10000000002");
+
+        if (!await db.UserManager.IsInRoleAsync(adminUser, "Admin"))
+        {
+            await db.UserManager.AddToRoleAsync(adminUser, "Admin");
+        }
+
+        if (!await db.UserManager.IsInRoleAsync(regularUser, "User"))
+        {
+            await db.UserManager.AddToRoleAsync(regularUser, "User");
+        }
+
+        // ---------- Catalog data ----------
+        if (db.CategoryRepository.GetAll().Any() ||
+            db.ManufacturerRepository.GetAll().Any() ||
+            db.ProductRepository.GetAll().Any())
+        {
+            // Already seeded
+            return;
+        }
+
+        // Shared descriptions (no duplication per product)
+        const string defaultLongDescription =
+            "Clean, modern furniture built from solid materials and durable fabrics. " +
+            "Every piece is designed for everyday use in contemporary homes with " +
+            "soft-close hardware, rounded edges and easy-to-clean finishes.";
+
+        const string defaultShortDescription =
+            "Modern, durable furniture ideal for contemporary living and dining spaces.";
+
+        var now = DateTime.UtcNow;
+
+        // Image URLs – free stock photos from Unsplash (furniture, interiors)
+        // Cabinets / wardrobes
+        const string cabinetImage1 = "https://unsplash.com/photos/a-room-filled-with-lots-of-white-cabinets-OosDQ87hK6I";
+        const string cabinetImage2 = "https://unsplash.com/photos/a-room-with-a-wooden-floor-and-white-closets-YbcX1Sbn5Qk";
+        const string cabinetImage3 = "https://unsplash.com/photos/modern-bedroom-with-a-sleek-wardrobe-design-JnAqOVTHx7w";
+
+        // Tables
+        const string tableImage1 = "https://unsplash.com/photos/modern-dining-table-with-upholstered-chairs-PXfUGQXaHNQ";
+        const string tableImage2 = "https://unsplash.com/photos/dining-table-with-chairs-and-a-plant-G1ZMhQZDHOQ";
+        const string tableImage3 = "https://unsplash.com/photos/dining-table-with-six-upholstered-chairs-in-a-bright-room-SrbklO9p8gI";
+
+        // Sofas
+        const string sofaImage1 = "https://unsplash.com/photos/a-living-room-with-a-couch-and-a-table-4Q9aOJF-6vI";
+        const string sofaImage2 = "https://unsplash.com/photos/living-room-with-brown-sofa-and-glass-window-4_jQL4JCS98";
+        const string sofaImage3 = "https://unsplash.com/photos/a-living-room-with-a-large-green-couch-VZ2z8ozzy10";
+
+        // Chairs
+        const string chairImage1 = "https://unsplash.com/photos/brown-wooden-chairs-v4sxFK-6k8U";
+        const string chairImage2 = "https://unsplash.com/photos/a-wooden-chair-sitting-on-top-of-a-wooden-floor-RCWIK0fsETc";
+        const string chairImage3 = "https://unsplash.com/photos/white-and-brown-wooden-chair-qdq8eDgRelA";
+
+        // Categories
+        var categories = new[]
+        {
+            new Category { Name = "Cabinets & Storage" },   // 0
+            new Category { Name = "Tables" },               // 1
+            new Category { Name = "Sofas" },                // 2
+            new Category { Name = "Chairs" }                // 3
         };
-        await db.UserManager.CreateAsync(user, "user12345");
-        await db.UserManager.AddToRoleAsync(adminUser, "User");
-
-
-        var categories = new List<Category>();
-        categories.Add(new Category { Name = "Cabinets" });
-        categories.Add(new Category { Name = "Tables" });
-        categories.Add(new Category { Name = "Sofaes" });
-        categories.Add(new Category { Name = "Chairs" });
 
         db.CategoryRepository.AddRange(categories);
 
-
-        var manufacturers = new List<Manufacturer>();
-        manufacturers.Add(new Manufacturer { Name = "MebelStar" });
-        manufacturers.Add(new Manufacturer { Name = "DochyloFactroy" });
-        manufacturers.Add(new Manufacturer { Name = "Mebelyer" });
-        manufacturers.Add(new Manufacturer { Name = "Daniro" });
+        // Manufacturers
+        var manufacturers = new[]
+        {
+            new Manufacturer { Name = "Nordic Home" },      // 0
+            new Manufacturer { Name = "Urban Loft Studio" },// 1
+            new Manufacturer { Name = "ComfortLine" },      // 2
+            new Manufacturer { Name = "Oak & Steel" }       // 3
+        };
 
         db.ManufacturerRepository.AddRange(manufacturers);
 
+        Category Cat(string name) =>
+            categories.Single(c => c.Name == name);
 
-        var product = new List<Product>
+        Manufacturer M(string name) =>
+            manufacturers.Single(m => m.Name == name);
+
+        Product CreateProduct(
+            string name,
+            decimal price,
+            string image1,
+            string image2,
+            string image3,
+            string hight,
+            string width,
+            string depth,
+            Category category,
+            Manufacturer manufacturer)
         {
-            new()
+            return new Product
             {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
-            new()
-            {
-                Name = "Cabinet", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 1, ManufacturerId = 1
-            },
+                Name = name,
+                Price = price,
+                ImageUrl_1 = image1,
+                ImageUrl_2 = image2,
+                ImageUrl_3 = image3,
+                Date = now,
+                Hight = hight,
+                Width = width,
+                Deepth = depth,
+                LongDescription = defaultLongDescription,
+                ShortDescription = defaultShortDescription,
+                Category = category,
+                Manufacturer = manufacturer
+            };
+        }
 
+        var products = new List<Product>
+        {
+            // Cabinets & Storage
+            CreateProduct(
+                name: "White Modular Wardrobe",
+                price: 4200,
+                image1: cabinetImage1,
+                image2: cabinetImage2,
+                image3: cabinetImage3,
+                hight: "210",
+                width: "160",
+                depth: "60",
+                category: Cat("Cabinets & Storage"),
+                manufacturer: M("Nordic Home")),
 
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
-            new()
-            {
-                Name = "Table", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 2, ManufacturerId = 2
-            },
+            CreateProduct(
+                name: "Compact Hallway Cabinet",
+                price: 2800,
+                image1: cabinetImage2,
+                image2: cabinetImage1,
+                image3: cabinetImage3,
+                hight: "190",
+                width: "90",
+                depth: "40",
+                category: Cat("Cabinets & Storage"),
+                manufacturer: M("Urban Loft Studio")),
 
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
-            new()
-            {
-                Name = "Sofa", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 3, ManufacturerId = 3
-            },
+            CreateProduct(
+                name: "Sliding Door Wardrobe",
+                price: 5100,
+                image1: cabinetImage3,
+                image2: cabinetImage1,
+                image3: cabinetImage2,
+                hight: "220",
+                width: "180",
+                depth: "65",
+                category: Cat("Cabinets & Storage"),
+                manufacturer: M("Oak & Steel")),
 
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            },
-            new()
-            {
-                Name = "Chair", Price = 3000,
-                ImageUrl_1 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_2 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                ImageUrl_3 = "http://m-star.com.ua/wp-content/uploads/2017/06/mebli-starokostyantyniv.jpg",
-                Date = DateTime.UtcNow, Hight = "132", Width = "321", Deepth = "100",
-                LongDescription =
-                    "Beryl Cook is one of Britain’s most talented and amusing artists .Beryl’s pictures feature women of all shapes and sizes enjoying themselves .Born between the two world wars, Beryl Cook eventually left Kendrick School in Reading at the age of 15, where she went to secretarial school and then into an insurance office. After moving to London and then Hampton, she eventually married her next door neighbour from Reading, John Cook. He was an officer in the Merchant Navy and after he left the sea in 1956, they bought a pub for a year before John took a job in Southern Rhodesia with a motor company. Beryl bought their young son a box of watercolours, and when showing him how to use it, she decided that she herself quite enjoyed painting. John subsequently bought her a child’s painting set for her birthday and it was with this that she produced her first significant work, a half-length portrait of a dark-skinned lady with a vacant expression and large drooping breasts. It was aptly named ‘Hangover’ by Beryl’s husband and",
-                ShortDescription =
-                    "It is often frustrating to attempt to plan meals that are designed for one. Despite this fact, we are seeing more and more recipe books and Internet websites that are dedicated to the act of cooking for one. Divorce and the death of spouses or grown children leaving for college are all reasons that someone accustomed to cooking for more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a streamlined plan of cooking that is more efficient for one person creating less",
-                CategoryId = 4, ManufacturerId = 4
-            }
+            // Tables
+            CreateProduct(
+                name: "Oslo Oak Dining Table",
+                price: 3600,
+                image1: tableImage1,
+                image2: tableImage2,
+                image3: tableImage3,
+                hight: "76",
+                width: "180",
+                depth: "90",
+                category: Cat("Tables"),
+                manufacturer: M("Oak & Steel")),
+
+            CreateProduct(
+                name: "Mila Round Dining Table",
+                price: 3100,
+                image1: tableImage2,
+                image2: tableImage1,
+                image3: tableImage3,
+                hight: "75",
+                width: "130",
+                depth: "130",
+                category: Cat("Tables"),
+                manufacturer: M("Nordic Home")),
+
+            CreateProduct(
+                name: "Luna Coffee Table Set",
+                price: 1900,
+                image1: tableImage3,
+                image2: tableImage2,
+                image3: tableImage1,
+                hight: "45",
+                width: "120",
+                depth: "60",
+                category: Cat("Tables"),
+                manufacturer: M("Urban Loft Studio")),
+
+            // Sofas
+            CreateProduct(
+                name: "Cloud 3-Seater Sofa",
+                price: 5200,
+                image1: sofaImage1,
+                image2: sofaImage2,
+                image3: sofaImage3,
+                hight: "90",
+                width: "220",
+                depth: "95",
+                category: Cat("Sofas"),
+                manufacturer: M("ComfortLine")),
+
+            CreateProduct(
+                name: "Nova Corner Sofa",
+                price: 7800,
+                image1: sofaImage2,
+                image2: sofaImage1,
+                image3: sofaImage3,
+                hight: "92",
+                width: "260",
+                depth: "190",
+                category: Cat("Sofas"),
+                manufacturer: M("ComfortLine")),
+
+            CreateProduct(
+                name: "Haven Compact Sofa",
+                price: 4300,
+                image1: sofaImage3,
+                image2: sofaImage1,
+                image3: sofaImage2,
+                hight: "88",
+                width: "190",
+                depth: "90",
+                category: Cat("Sofas"),
+                manufacturer: M("Nordic Home")),
+
+            // Chairs
+            CreateProduct(
+                name: "Ivy Lounge Chair",
+                price: 1700,
+                image1: chairImage1,
+                image2: chairImage2,
+                image3: chairImage3,
+                hight: "85",
+                width: "75",
+                depth: "80",
+                category: Cat("Chairs"),
+                manufacturer: M("Urban Loft Studio")),
+
+            CreateProduct(
+                name: "Orbit Office Chair",
+                price: 2100,
+                image1: chairImage2,
+                image2: chairImage1,
+                image3: chairImage3,
+                hight: "110",
+                width: "65",
+                depth: "70",
+                category: Cat("Chairs"),
+                manufacturer: M("ComfortLine")),
+
+            CreateProduct(
+                name: "Nordic Dining Chair",
+                price: 950,
+                image1: chairImage3,
+                image2: chairImage1,
+                image3: chairImage2,
+                hight: "82",
+                width: "48",
+                depth: "55",
+                category: Cat("Chairs"),
+                manufacturer: M("Oak & Steel"))
         };
-        db.ProductRepository.AddRange(product);
 
+        db.ProductRepository.AddRange(products);
 
         await db.SaveAsync();
     }

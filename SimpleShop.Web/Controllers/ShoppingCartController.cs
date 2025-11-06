@@ -1,9 +1,9 @@
-﻿using ForGoodTime.Views.Shared.Components.ShoppingCartSummary;
-using Microsoft.AspNetCore.Mvc;
-using Shop.BLL.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shop.DAL.Interfaces;
+using SimpleShop.BLL.Interfaces;
+using SimpleShop.Web.Views.Shared.Components.ShoppingCartSummary;
 
-namespace ForGoodTime.Controllers;
+namespace SimpleShop.Web.Controllers;
 
 public class ShoppingCartController(IProductRepository productRepository, IShoppingCartService shoppingCart)
     : Controller
@@ -18,8 +18,7 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
             ShoppingCartItemsTotal = shoppingCartCountTotal.ItemCount,
             ShoppingCartTotal = shoppingCartCountTotal.TotalAmmount
         };
-
-
+        
         return View(shoppingCartViewModel);
     }
 
@@ -31,7 +30,7 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
 
         await shoppingCart.AddToCartAsync(selectedCake);
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
@@ -42,7 +41,7 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
 
         await shoppingCart.AddToCartAsync(selectedCake);
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
@@ -53,13 +52,13 @@ public class ShoppingCartController(IProductRepository productRepository, IShopp
 
         await shoppingCart.RemoveFromCartAsync(selectedCake);
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
     public async Task<IActionResult> RemoveAllCart()
     {
         await shoppingCart.ClearCartAsync();
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 }

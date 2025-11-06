@@ -11,6 +11,7 @@ using Model.Entities.Enums;
 using Shop.BLL.Infrastructure;
 using Shop.BLL.Interfaces;
 using Shop.DAL.Interfaces;
+using SimpleShop.BLL.Interfaces;
 
 namespace Shop.BLL.Services;
 
