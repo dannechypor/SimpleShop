@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
-    <RootNamespace>ForGoodTime</RootNamespace>
+    <RootNamespace>SimpleShop.Web</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

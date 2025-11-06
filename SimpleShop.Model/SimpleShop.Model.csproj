@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
-    <RootNamespace>Model</RootNamespace>
+    <RootNamespace>SimpleShop.Model</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

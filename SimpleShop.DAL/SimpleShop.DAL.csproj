@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
-    <RootNamespace>Shop.DAL</RootNamespace>
+    <RootNamespace>SimpleShop.DAL</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
